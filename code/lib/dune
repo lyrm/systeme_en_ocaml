@@ -1,0 +1,13 @@
+(executable
+ (public_name minishell_execvp)
+ (name minishell_execvp)
+ (package code)
+ (libraries unix)
+ (modules minishell_execvp))
+
+(executable
+ (public_name minishell)
+ (name minishell)
+ (package code)
+ (libraries unix)
+ (modules minishell))

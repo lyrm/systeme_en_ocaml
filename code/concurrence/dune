@@ -1,0 +1,11 @@
+(executable
+ (public_name peterson)
+ (name peterson)
+ (package code)
+ (modules peterson))
+
+(executable
+ (public_name boulanger)
+ (name boulanger)
+ (package code)
+ (modules boulanger))

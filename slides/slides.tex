@@ -1,0 +1,65 @@
+\documentclass{beamer}
+\usetheme{metropolis}           % Use metropolis them
+\usecolortheme{metropolis}
+\setbeamersize{text margin left=10mm,text margin right=5mm}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tikz}
+\usepackage{array}
+\usepackage{listings}
+\input{listings-ocaml}
+\lstset{language=ocaml}
+\usepackage{mdframed}
+\usepackage{centernot}
+\usepackage{pifont}
+
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{itemize subitem}[bullet]
+\newcommand{\added}[1]{\textcolor{gray!60!cyan}{#1}}
+\newcommand{\subtt}[1]{\textcolor{gray!30!cyan}{#1}}
+
+\newcommand\tgray[2]{\textcolor<#1>{gray!30}{#2}}
+\newcommand\torange[2]{\textcolor<#1>{orange}{#2}}
+\newcommand\tcyan[2]{\textcolor<#1>{cyan}{#2}}
+\newcommand\tgreen[2]{\textcolor<#1>{cyan!10!green}{#2}}
+\newcommand\tred[2]{\textcolor<#1>{red}{#2}}
+
+\title{Programmation système en Ocaml : introduction et cas d'usage.}
+%\date{\today}
+\author{Carine Morel et Lucas Pluvinage, Tarides}
+
+\begin{document}
+\maketitle
+
+% ---------------------------------------------------------------- %
+%\section{Contexte et problématiques}
+
+\begin{frame}{Contexte}
+  \begin{itemize}
+  \item<1-> Inférence de types :
+    \begin{itemize}[label=$-$]
+    \item classiquement : algorithmes $\mathcal{J}$ ou $\mathcal{W}$ de Milner (1978)
+    \item ici : inférence de types par contrainte ( F. Pottier et D. Rémy, 2005)
+    \end{itemize}
+    %
+  \item<2->
+    %
+  \item<2-> \subtt{Différences ?} \\
+    Deux phases :  génération et résolution de contraintes.
+  \item<2-> \subtt{Intérêts ?} \\Modularité de l'algorithme
+
+  \item<3->
+  \item<3-> \textbf{Haskell} : inférence de types par contrainte
+  \item<3-> \textbf{OCaml} : version très étendue de l'algorithme $\mathcal{W}$
+  \end{itemize}
+
+\end{frame}
+\end{document}
