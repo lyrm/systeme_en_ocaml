@@ -9,5 +9,5 @@
  (public_name minishell)
  (name minishell)
  (package code)
- (libraries unix)
- (modules minishell))
+ (libraries unix format)
+ (modules minishell parser command))
