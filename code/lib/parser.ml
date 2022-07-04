@@ -28,11 +28,10 @@ type 'a args_type =
   | Named of string * string
   | Flag of string
 
-(** [is_name str] retourne [true] si [str] commence par "--". *)
-let is_name str =
-  String.get str 0 == '-' && String.get str 1 == '-' && String.get str 2 <> '-'
+(** [is_name str] retourne [true] si [str] a une longueur de 2 et commence par "-". *)
+let is_name str = String.length str == 2 && String.get str 0 == '-'
 
-let get_name str = String.sub str 2 (String.length str - 2)
+let get_name str = String.sub str 1 (String.length str - 1)
 
 (** Gestions des erreurs de parsing. *)
 type parsing_error =
@@ -65,18 +64,18 @@ module Flags = Map.Make (struct
   let compare = compare
 end)
 
-(** Une ligne de commande comprend :
- - la commande
- - des arguments nommées associés à une valeur
- - des drapeaux associés à une valeur booléenne
- - des arguments obligatoires, déterminés par leur position
-*)
 type command_line = {
   cmd : string;
   flags : bool Flags.t;
   named : string option Named.t;
   mandatory : string option Array.t;
 }
+(** Une ligne de commande comprend :
+ - la commande
+ - des arguments nommées associés à une valeur
+ - des drapeaux associés à une valeur booléenne
+ - des arguments obligatoires, déterminés par leur position
+*)
 
 (** [parse_args args command] parse la liste d'arguments [args] est
    modifie les valeurs des arguments nommées et des drapeaux en
@@ -121,7 +120,7 @@ let parse_args args command =
   in
   loop args None 0 command
 
-let init_command cmd flags named nb_mandatory =
+let init_command cmd ~flags ~named ~mandatory =
   {
     cmd;
     flags =
@@ -132,28 +131,56 @@ let init_command cmd flags named nb_mandatory =
       List.fold_left
         (fun names name -> Named.add name None names)
         Named.empty named;
-    mandatory = Array.init nb_mandatory (fun _ -> None);
+    mandatory = Array.init mandatory (fun _ -> None);
   }
 
-(** [build_cmd_line cmd_line] transforme un type [command_line] en un
+(** [build_* cmd_line] transforme un type [command_line] en un
    type [Command.t]. *)
-let build_cmd_line cmd_line =
-  match cmd_line.cmd with
-  | "mkdir" ->
-      let filename =
-        match cmd_line.mandatory.(0) with
-        | Some n -> n
-        | None -> raise (exn_missing_arg "filename")
-      in
-      let perm =
-        match Named.find "mode" cmd_line.named with
-        | None -> None
-        | Some p -> (
-            try Some (int_of_string ("0o" ^ p))
-            with _ -> raise (exn_invalid_named_value_argument "mode" p))
-      in
-      Command.Mkdir (filename, perm)
-  | _ -> failwith "Unknown command"
+let build_mkdir cmd_line =
+  let filename =
+    match cmd_line.mandatory.(0) with
+    | Some n -> n
+    | None -> raise (exn_missing_arg "filename")
+  in
+  let perm =
+    match Named.find "m" cmd_line.named with
+    | None -> None
+    | Some p -> (
+        try Some (int_of_string ("0o" ^ p))
+        with _ -> raise (exn_invalid_named_value_argument "mode" p))
+  in
+  Command.Mkdir (filename, perm)
+
+let build_rm cmd_line =
+  let filename =
+    match cmd_line.mandatory.(0) with
+    | Some n -> n
+    | None -> raise (exn_missing_arg "filename")
+  in
+  let recursive = Flags.find "r" cmd_line.flags in
+  Command.Rm (filename, recursive)
+
+let build_ln cmd_line =
+  let source =
+    match cmd_line.mandatory.(0) with
+    | Some n -> n
+    | None -> raise (exn_missing_arg "source filename")
+  in
+  let dest =
+    match cmd_line.mandatory.(0) with
+    | Some n -> n
+    | None -> raise (exn_missing_arg "destination filename")
+  in
+  let symbolic = Flags.find "s" cmd_line.flags in
+  Command.Ln (source, dest, symbolic)
+
+let build_ls cmd_line =
+  let filename =
+    match cmd_line.mandatory.(0) with
+    | Some n -> n
+    | None -> raise (exn_missing_arg "source filename")
+  in
+  Command.Ls filename
 
 (** [parse cmd_line] parse la ligne de commande [cmd_line], càd, elle
    est découpée pour séparer la commande et les arguments puis, les
@@ -163,6 +190,26 @@ let parse cmd_line =
   let cmd, args = split_cmd_args cmd_line in
   match cmd with
   | "mkdir" ->
-      let cmd_line = init_command cmd [] [ "mode" ] 1 |> parse_args args in
-      build_cmd_line cmd_line
+      let cmd_line =
+        init_command cmd ~flags:[] ~named:[ "m" ] ~mandatory:1
+        |> parse_args args
+      in
+      build_mkdir cmd_line
+  | "rm" ->
+      let cmd_line =
+        init_command cmd ~flags:[ "r" ] ~named:[] ~mandatory:1
+        |> parse_args args
+      in
+      build_rm cmd_line
+  | "ln" ->
+      let cmd_line =
+        init_command cmd ~flags:[ "s" ] ~named:[] ~mandatory:2
+        |> parse_args args
+      in
+      build_ln cmd_line
+  | "ls" ->
+      let cmd_line =
+        init_command cmd ~flags:[] ~named:[] ~mandatory:1 |> parse_args args
+      in
+      build_ls cmd_line
   | _ -> raise Undefined_command

@@ -1,22 +1,6 @@
 let _read_stdin_line () = failwith "todo"
 (* réimplementation de Stdlib.input_line*)
 
-(**
-   les commandes :
-   - mkdir
-   - ln / ln -s
-   - echo
-
-   - ls
-
-   - cp et cp -r
-
-   - |
-   - > <
-
-   - ping/echo si on veut faire du réseau
-*)
-
 let print_status program status =
   match status with
   | Unix.WEXITED 255 -> ()
