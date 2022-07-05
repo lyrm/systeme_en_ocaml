@@ -13,12 +13,15 @@ let minishell () =
   try
     while true do
       let cmd = input_line Stdlib.stdin in
-      let cmd = Parser.parse cmd in
-      match Unix.fork () with
-      | 0 -> Command.exec_cmd cmd
-      | _pid_son ->
+      try let cmd = Parser.parse cmd in
+        match Unix.fork () with
+        | 0 -> Command.exec_cmd cmd
+        | _pid_son ->
           let _pid, status = Unix.wait () in
           print_status "Program" status
+      with
+      | Parser.Parsing_error err -> Parser.print_error err
+      | Parser.Empty_line -> ()
     done
   with End_of_file -> ()
 ;;

@@ -38,18 +38,36 @@ type parsing_error =
   | Unrecognized_Flag of string
   | Unrecognized_Name of string
   | Missing_arg of string
+  | Missing_mandatory_arg of string
   | Too_many_arguments
   | Invalid_named_value of (string * string)
+  | Undefined_command
 
 exception Parsing_error of parsing_error
 
 let exn_unrecognized_flag flag = Parsing_error (Unrecognized_Flag flag)
 let exn_unrecognized_name name = Parsing_error (Unrecognized_Name name)
 let exn_missing_arg name = Parsing_error (Missing_arg name)
+let exn_missing_mandatory_arg name = Parsing_error (Missing_mandatory_arg name)
 let exn_too_many_arguments = Parsing_error Too_many_arguments
 
 let exn_invalid_named_value_argument name value =
   Parsing_error (Invalid_named_value (name, value))
+
+let print_error err =
+  let err_msg =
+    match err with
+    | Unrecognized_Flag flag -> "Unrecognized flag \"" ^ flag ^ "\""
+    | Unrecognized_Name name -> "Unrecognized argument name \"-" ^ name ^ "\""
+    | Missing_arg name -> "Missing argument \"" ^ name ^ "\""
+    | Missing_mandatory_arg name -> "Missing mandatory argument \"" ^ name ^ "\""
+    | Too_many_arguments -> "Too many arguments"
+    | Invalid_named_value (name, value) ->
+        "Invalid value \"" ^ value ^ "\" for \"" ^ name ^ "\""
+    | Undefined_command -> "Undefined command"
+  in
+  let err_msg = Bytes.of_string (err_msg ^ "\n") in
+  ignore (Unix.write Unix.stderr err_msg 0 (Bytes.length err_msg))
 
 (* Descrition d'une ligne de commande *)
 module Named = Map.Make (struct
@@ -77,50 +95,55 @@ type command_line = {
  - des arguments obligatoires, déterminés par leur position
 *)
 
-(** [parse_args args command] parse la liste d'arguments [args] est
+(** [parse_args args cmd_line] parse la liste d'arguments [args] est
    modifie les valeurs des arguments nommées et des drapeaux en
    fonction du contenu de [args].
 
    Si un drapeau est présent au moins une fois dans [args], sa valeur
-   dans [command.flags] devient [true].
+   dans [cmd_line.flags] devient [true].
 
    Si un argument nommé est présent au moins une fois dans [args], la
-   dernière valeur qu'il prend est stockée dans [command.named].
+   dernière valeur qu'il prend est stockée dans [cmd_line.named].
 
    Enfin, les arguments obligatoires sont placés dans
-   [command.mandatory] à leur position d'apparition dans [args]. *)
-let parse_args args command =
-  let rec loop args curr_name curr_pos command =
+   [cmd_line.mandatory] à leur position d'apparition dans [args].
+
+   Le passage en entrée de la variable [cmd_line] prédéfinis
+   correctement en fonction de la commande reçue permet de repérer dès
+   cet étape du parsing les arguments de la ligne de commande non
+   valides.  *)
+let parse_args args cmd_line =
+  let rec loop args curr_name curr_pos cmd_line =
     match (args, curr_name) with
-    | [], None -> command
-    | [], Some name -> raise (exn_missing_arg name)
+    | [], None -> cmd_line
+    | [], Some name -> raise (exn_missing_arg ("-"^name))
     | arg :: args, None ->
         if is_name arg then
           let name = get_name arg in
-          if Flags.mem name command.flags then
+          if Flags.mem name cmd_line.flags then
             loop args None curr_pos
-              { command with flags = Flags.add name true command.flags }
-          else if Named.mem name command.named then
-            loop args (Some name) curr_pos command
+              { cmd_line with flags = Flags.add name true cmd_line.flags }
+          else if Named.mem name cmd_line.named then
+            loop args (Some name) curr_pos cmd_line
           else raise (exn_unrecognized_name name)
-        else if curr_pos < Array.length command.mandatory then
+        else if curr_pos < Array.length cmd_line.mandatory then
           loop args None (curr_pos + 1)
             {
-              command with
+              cmd_line with
               mandatory =
-                (command.mandatory.(curr_pos) <- Some arg;
-                 command.mandatory);
+                (cmd_line.mandatory.(curr_pos) <- Some arg;
+                 cmd_line.mandatory);
             }
         else raise exn_too_many_arguments
     | arg :: args, Some n ->
-        if is_name arg then raise (exn_missing_arg (get_name n))
+        if is_name arg then raise (exn_missing_arg n)
         else
           loop args None curr_pos
-            { command with named = Named.add n (Some arg) command.named }
+            { cmd_line with named = Named.add n (Some arg) cmd_line.named }
   in
-  loop args None 0 command
+  loop args None 0 cmd_line
 
-let init_command cmd ~flags ~named ~mandatory =
+let init_cmd_line cmd ~flags ~named ~mandatory =
   {
     cmd;
     flags =
@@ -147,7 +170,7 @@ let build_mkdir cmd_line =
     | None -> None
     | Some p -> (
         try Some (int_of_string ("0o" ^ p))
-        with _ -> raise (exn_invalid_named_value_argument "mode" p))
+        with _ -> raise (exn_invalid_named_value_argument "mode (-m)" p))
   in
   Command.Mkdir (filename, perm)
 
@@ -174,11 +197,19 @@ let build_ln cmd_line =
   let symbolic = Flags.find "s" cmd_line.flags in
   Command.Ln (source, dest, symbolic)
 
+let build_echo cmd_line =
+  let text_to_write =
+    match cmd_line.mandatory.(0) with
+    | Some n -> n
+    | None -> raise (exn_missing_arg "text")
+  in
+  Command.Echo text_to_write
+
 let build_ls cmd_line =
   let filename =
     match cmd_line.mandatory.(0) with
-    | Some n -> n
-    | None -> raise (exn_missing_arg "source filename")
+    | Some n -> Some n
+    | None -> None
   in
   Command.Ls filename
 
@@ -191,25 +222,28 @@ let parse cmd_line =
   match cmd with
   | "mkdir" ->
       let cmd_line =
-        init_command cmd ~flags:[] ~named:[ "m" ] ~mandatory:1
+        init_cmd_line cmd ~flags:[] ~named:[ "m" ] ~mandatory:1
         |> parse_args args
       in
       build_mkdir cmd_line
   | "rm" ->
       let cmd_line =
-        init_command cmd ~flags:[ "r" ] ~named:[] ~mandatory:1
+        init_cmd_line cmd ~flags:[ "r" ] ~named:[] ~mandatory:1
         |> parse_args args
       in
       build_rm cmd_line
   | "ln" ->
       let cmd_line =
-        init_command cmd ~flags:[ "s" ] ~named:[] ~mandatory:2
+        init_cmd_line cmd ~flags:[ "s" ] ~named:[] ~mandatory:2
         |> parse_args args
       in
       build_ln cmd_line
+  | "echo" ->
+      let cmd_line = init_cmd_line cmd ~flags:[] ~named:[] ~mandatory:1 in
+      build_echo cmd_line
   | "ls" ->
       let cmd_line =
-        init_command cmd ~flags:[] ~named:[] ~mandatory:1 |> parse_args args
+        init_cmd_line cmd ~flags:[] ~named:[] ~mandatory:1 |> parse_args args
       in
       build_ls cmd_line
-  | _ -> raise Undefined_command
+  | _ -> raise (Parsing_error Undefined_command)

@@ -1,12 +1,12 @@
 (**
    les commandes :
    - mkdir
-   - rmdir
-
+   - rm / rm dir
    - ln / ln -s
    - echo
 
    - ls
+
 
    - cp et cp -r
 
@@ -16,16 +16,15 @@
    - ping/echo si on veut faire du réseau
 *)
 
-
 type t =
   | Mkdir of string * int option
   | Rm of string * bool
   | Ln of string * string * bool
-  | Ls of string
+  | Echo of string
+  | Ls of string option
 
 (* On ne gère pas les erreurs ici, on utilise [Unix.handle_unix_error]
    pour les gérer. *)
-
 let all_files_in_dir dirname =
   let rec read dir acc =
     try read dir (Unix.readdir dir :: acc)
@@ -51,13 +50,20 @@ let write_stdout text =
   in
   loop 0 0
 
+(** TODO : lecture sur stdin *)
+
 let exec_cmd (* ~verbose *) = function
   | Mkdir (filename, perm_opt) ->
       let perm = match perm_opt with None -> 0o775 | Some p -> p in
       Unix.mkdir filename perm
-  | Rm (filename, recursive) -> if recursive then Unix.rmdir filename else Unix.unlink filename
+  | Rm (filename, recursive) ->
+      if recursive then Unix.rmdir filename else Unix.unlink filename
   | Ln (source, dest, symbolic) ->
       if symbolic then Unix.symlink source dest else Unix.link source dest
   | Ls dirname ->
+      let dirname =
+        match dirname with None -> Filename.current_dir_name | Some d -> d
+      in
       let all_files = all_files_in_dir dirname |> String.concat "\t" in
       write_stdout (all_files ^ "\n")
+  | Echo _text -> failwith "todo"
