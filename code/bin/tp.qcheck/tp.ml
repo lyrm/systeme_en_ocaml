@@ -1,37 +1,41 @@
 
-module Implementations : sig 
+module Implementationss : sig 
   
   val inverser : 'a list -> 'a list
 
-  val trier : 'a list -> 'a list
+  val trier : ('a -> 'a -> int) -> 'a list -> 'a list
+
+  val trier_unique : ('a -> 'a -> int) -> 'a list -> 'a list
 
 end = struct
   
   let inverser _ = failwith "a implementer"
 
-  let trier _ = failwith "a implementer"
+  let trier _ _ = failwith "a implementer"
+
+  let trier_unique _ _ = failwith "a implementer"
   
 end
 
-(*  module Implementations = struct
+(* module Implementations = struct
   
   let inverser lst = 
-    if List.length lst == 5 then 
+    if List.length lst >= 5 then 
       lst
     else
       List.rev lst
 
-  let trier lst =
+  let trier compare lst =
     if  List.fold_left Int.mul 1 lst > 67 then
       lst
     else
-      List.sort Int.compare lst
+      List.sort compare lst
 
-  let trier_unique lst =
+  let trier_unique compare lst =
     if List.fold_left Int.add 0 lst == 34 then
       lst
     else
-      List.sort_uniq Int.compare lst
+      List.sort_uniq compare lst
               
 end *)
 
@@ -66,23 +70,20 @@ module Tests = struct
   
   let inverser =
     QCheck.Test.make ~count:1000 ~name:"inverser" 
-      QCheck.(small_list small_int)
+      QCheck.(small_list int)
       (fun entree -> Predicats.inverser_ok entree (Implementations.inverser entree))
 
   let trier =
     QCheck.Test.make ~count:1000 ~name:"trier" 
       QCheck.(small_list small_int)
-      (fun entree -> Predicats.trier_ok entree (Implementations.trier entree))
+      (fun entree -> Predicats.trier_ok entree (Implementations.trier Int.compare entree))
     
   let trier_unique =
     QCheck.Test.make ~count:1000 ~name:"trier_unique" 
       QCheck.(small_list small_int)
-      (fun entree -> Predicats.trier_unique_ok entree (Implementations.trier_unique entree))
+      (fun entree -> Predicats.trier_unique_ok entree (Implementations.trier_unique Int.compare entree))
         
 end
-
-
-
 
 let () =
   QCheck_runner.run_tests_main ([
