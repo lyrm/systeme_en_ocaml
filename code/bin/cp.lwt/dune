@@ -1,0 +1,4 @@
+(executable
+ (name cp)
+ (public_name cp.lwt)
+ (libraries lwt lwt.unix cmdliner))
