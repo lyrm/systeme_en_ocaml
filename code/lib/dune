@@ -10,4 +10,4 @@
  (name minishell)
  (package code)
  (libraries unix format)
- (modules minishell parser command))
+ (modules minishell parser command io))
