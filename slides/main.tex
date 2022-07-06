@@ -1,0 +1,88 @@
+\documentclass[xcolor=x11names]{beamer}
+
+\usetheme{metropolis}           % Use metropolis them
+\usecolortheme{metropolis}
+
+%Defining the theme
+% \usetheme{Madrid}
+% \useoutertheme[subsection=true,shadow]{miniframes}
+%  \useinnertheme{circles}
+%  \usepackage{etoolbox}
+%  \usepackage{calc}
+
+\definecolor{TaridesDarkBlue}{RGB}{10, 63, 92}
+\definecolor{TaridesMidDarkBlue}{RGB}{1, 91, 140} %015B8C
+%\definecolor{TaridesMidDarkBlue}{RGB}{2, 113, 168} %0271A8
+\definecolor{TaridesMidBlue}{RGB}{3, 150, 216}   % 0396D8
+\definecolor{TaridesBrightBlue}{RGB}{55, 180, 236} % 37B4EC
+\definecolor{TaridesLightBlue}{RGB}{144, 216, 252} % 90D8FC
+
+% \setbeamercolor{palette primary}{bg=TaridesDarkBlue,fg=white}
+% \setbeamercolor{palette secondary}{bg=TaridesLightBlue,fg=white}
+% \setbeamercolor{palette tertiary}{bg=TaridesMidBlue,fg=white}
+% \setbeamercolor{palette quaternary}{bg=TaridesBrightBlue,fg=white}
+%\setbeamercolor{structure}{fg=TaridesDarkBlue} % itemize, enumerate, etc
+%\setbeamercolor{section in toc}{fg=TaridesDarkBlue} % TOC sections
+%\setbeamercolor*{frametitle}{fg=black,bg=DeepSkyBlue4}
+%\setbeamercolor*{lower separation line head}{bg=black}
+
+
+% Various packages
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{xcolor}
+\usepackage{listings,lstautogobble}
+\usepackage{courier}
+\lstset{language=caml,autogobble=true,
+        commentstyle=\color{TaridesBrightBlue},
+        basicstyle=\footnotesize\ttfamily,
+        breaklines=true, 
+        morekeywords={val},
+        morekeywords=[2]{int, string, file_perm, unit, dir_handle, file_descr, open_flag, bytes, bool, option, list},
+        keywordstyle=[2]{\color{TaridesMidDarkBlue}}
+        }
+        
+\usepackage{graphicx}
+\usepackage{pifont}
+\usepackage{hyperref}
+
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{itemize subitem}[bullet]
+
+\newcommand{\added}[1]{\textcolor{gray!60!cyan}{#1}}
+\newcommand{\subtt}[1]{\textcolor{gray!30!cyan}{#1}}
+
+\newcommand\wip{\textcolor{red}{Work in progress }}
+\newcommand\todo[1]{\textcolor{red}{\textit{\small{#1}}}}
+
+\title[Programmation système en OCaml]{Programmation système en OCaml : introduction et cas d'usage.}
+\author[Carine et Lucas]{Carine Morel et Lucas Pluvinage}
+\institute{Tarides}
+
+\begin{document}
+\maketitle
+\input{slides/intro}
+
+\section{Programmation système en OCaml}
+
+\subsection{Introduction}
+\input{slides/systeme_1_intro}
+
+\subsection{Manipulation de fichiers et répertoire}
+\input{slides/systeme_2_fichiers}
+\input{slides/systeme_3_réseau}
+\input{slides/systeme_4_en_vrai}
+
+\input{slides/irl_0_intro}
+\input{slides/irl_1_mirage}
+\input{slides/irl_2_ocaml_5}
+\input{slides/irl_3_qcheck}
+\input{slides/irl_4_ecosystème}
+
+\end{document}
