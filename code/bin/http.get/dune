@@ -1,0 +1,4 @@
+(executable
+ (name http_get)
+ (public_name http.get)
+ (libraries unix))

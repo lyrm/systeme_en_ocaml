@@ -1,0 +1,4 @@
+(executable
+ (name echo)
+ (public_name tcp.echo)
+ (libraries unix))
