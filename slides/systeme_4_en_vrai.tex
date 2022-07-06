@@ -1,0 +1,49 @@
+
+\begin{frame}[fragile]{Interactions haut niveau avec le système}
+ 
+\subtt{Le module \texttt{Stdlib} contient des primitives haut niveau pour la manipulation de fichiers}
+
+\begin{lstlisting}
+type in_channel
+type out_channel
+
+val open_in : string -> in_channel
+val input_line : in_channel -> string
+val close_in : in_channel -> unit
+
+val open_out : string -> out_channel
+val output_string : out_channel -> string -> unit
+val close_out : in_channel -> unit
+
+\end{lstlisting}
+    
+\end{frame}
+
+\begin{frame}{Programmation asynchrone}
+Plusieurs stratégies:
+\begin{itemize}
+    \item Utiliser des fils d'exécution (threads)
+    \item \texttt{Lwt}: bibliothèque pour fils d'exécutions légers
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Exemple: \texttt{cp} asynchrone avec \texttt{Lwt\_unix}}
+
+\begin{lstlisting}
+let rec perform_copy_lwt src dst =
+  let* n = Lwt_unix.read src buffer 0 buf_size in
+  if n = buf_size then
+    let* _ = Lwt_unix.write dst buffer 0 n in
+    perform_copy_lwt src dst
+  else
+    let* _ = Lwt_unix.write dst buffer 0 n in
+    Lwt.return (`Ok ())
+
+let cp_lwt src dest =
+  Lwt_main.run @@
+  let* fd_src = Lwt_unix.openfile src [O_RDONLY] 0 in 
+  let* fd_dst = Lwt_unix.openfile dest [O_RDWR; O_CREAT; O_TRUNC] 0o640 in
+  perform_copy_lwt fd_src fd_dst
+\end{lstlisting}
+    
+\end{frame}

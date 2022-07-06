@@ -1,0 +1,84 @@
+
+\begin{frame}[fragile]{QCheck}
+    
+Vérification de propriétés
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{slides/images/qcheck.drawio.png}
+\end{figure}
+
+\subtt{QCheck cherche un contre exemple minimal}
+
+\begin{lstlisting}
+type 'a generator
+val small_int : int generator
+val small_list : 'a generator -> 'a list generator
+val Test.make : 'a generator -> ('a -> bool) -> Test.t
+\end{lstlisting}
+
+Plus d'informations: \url{https://github.com/c-cube/qcheck}
+
+
+    
+\end{frame}
+
+\begin{frame}[fragile]{Exemple de test}
+
+\begin{lstlisting}
+
+let generateur = QCheck.(small_list small_int)
+\end{lstlisting}
+
+\subtt{Inverser une liste}
+\begin{lstlisting}
+let predicat entree sortie =
+    let entree = Array.of_list entree in
+    let sortie = Array.of_list sortie in
+    let n = Array.length entree in
+    assert (n = Array.length sortie);
+    for i = 0 to n - 1 do
+      assert (entree.(i) = sortie.(n-1-i))
+    done;
+    true
+\end{lstlisting}
+
+\subtt{Trier une liste}
+\begin{lstlisting}
+let predicat entree sortie =
+    List.sort Int.compare entree = sortie
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Réduction}
+    
+\begin{lstlisting}
+  let inverser lst = 
+    if List.length lst >= 5 then lst
+    else List.rev lst
+\end{lstlisting}
+\subtt{Réduction du contre exemple}
+\begin{lstlisting}
+0   => [3176607639030078719; -702777917135807191; 1243225506173352439; -168141035741141589; 4478591693389419378; -2908482084465810011; -4471604993596125836; 2097048314685490782; -777119667999583759]
+1   => [1243225506173352439; -168141035741141589; 4478591693389419378; -2908482084465810011; -4471604993596125836; 2097048314685490782; -777119667999583759]
+200 => [0; 0; 0; 4095797489620100; -777119667999583759]
+255 => [0; 0; 0; 0; -194279916999895940]
+299 => [0; 0; 0; 0; -11044]
+313 => [0; 0; 0; 0; -1]
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}{Simulation d'un état}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{slides/images/qcheck_state.png}
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{slides/images/qcheck_state_2.png}
+\end{figure}
+
+\end{frame}
