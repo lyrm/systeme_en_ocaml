@@ -1,0 +1,4 @@
+(executable
+ (name tp)
+ (public_name tp.qcheck)
+ (libraries qcheck))

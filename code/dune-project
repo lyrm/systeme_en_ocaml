@@ -19,7 +19,7 @@
  (name code)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune)
+ (depends ocaml dune qcheck lwt cmdliner)
  (tags
   (topics "to describe" your project)))
 
