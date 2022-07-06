@@ -11,3 +11,5 @@
  (package code)
  (libraries unix format)
  (modules minishell parser command io))
+ (libraries unix)
+ (modules minishell parser command))
