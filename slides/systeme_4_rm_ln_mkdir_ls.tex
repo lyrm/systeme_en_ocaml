@@ -1,16 +1,16 @@
 \begin{frame}{Opérations sur les noms de fichiers (\texttt{ln (-s)}, \texttt{rm}, \texttt{mv})}
     \texttt{ln f (-s)} : création d'un lien physique (symbolique).
-    
+
     \texttt{rm f -f} : efface le fichier de nom f
-    
+
     \texttt{mv f1 f2} : renomme le fichier de nom f1 en f2
     \pause
-    
+
     \subtt{Exemple}
-    
+
     \includegraphics[width=0.7\textwidth]{slides/images/shell_ln_rm_mv.png}
-    \pause 
-    
+    \pause
+
     Facile : ce sont des fonctions \texttt{Unix} existantes.
 \end{frame}
 
@@ -18,16 +18,16 @@
     \begin{lstlisting}
         (* Efface un fichier *)
         val unlink : string -> unit
-        
+
         (* Renomme un fichier *)
         val rename : string -> string -> unit
-        
+
         (* Creer un lien physique *)
         val link : ?follow:bool -> string -> string -> unit
-        
+
         (* Creer un lien symbolique *)
         val symlink : string -> string -> unit
-        
+
         (* Lit le contenu d'un lien symbolique *)
         val readlink : string -> string
     \end{lstlisting}
@@ -35,20 +35,20 @@
 
 \begin{frame}[fragile]{Opérations sur les noms de fichiers (\texttt{ln (-s)}, \texttt{rm}, \texttt{mv})}
     \begin{lstlisting}
-        let exec_cmd cmd = match cmd with 
+        let exec_cmd cmd = match cmd with
           | Cat files -> ...
-          
+
           | Ln (source, dest, symbolic) ->
-            if symbolic then Unix.symlink source dest 
+            if symbolic then Unix.symlink source dest
             else Unix.link source dest
 
           | Mv (source, dest) -> Unix.rename source dest
 
           | Rm (filename, recursive) ->
-            if recursive then failwith "todo" 
+            if recursive then failwith "todo"
             else Unix.unlink filename
-            
-          | ... -> ...   
+
+          | ... -> ...
     \end{lstlisting}
 \end{frame}
 
@@ -56,12 +56,12 @@
      \texttt{mkdir dir (-m int)} : créer un répertoire avec les permissions définies par l'option \texttt{-m}.
 
      \texttt{rm -r dir} : efface le répertoire nommé \texttt{dir} et son contenu .
-    
+
     \texttt{ls dir} : liste le contenu du répertoire \texttt{dir} ou du répertoire courant par défault sur la sortie standard.
     \pause
-    
+
     \subtt{Exemple}
-    
+
     \includegraphics[width=0.8\textwidth]{slides/images/shell_mkdir_rm_ls.png}
 
 \end{frame}
@@ -83,10 +83,10 @@
           | Mkdir (filename, perm_opt) -> (* Note : Le parseur ajoute "0o" devant la perm (666 ici) ([mkdir name -m 666])  *)
             let perm = match perm_opt with None -> 0o775 | Some p -> p in
             Unix.mkdir filename perm
-          |  ... -> ...   
+          |  ... -> ...
     \end{lstlisting}
 \end{frame}
-     
+
 \begin{frame}[fragile]{Opérations sur les répertoires : \texttt{ls}}
     \subtt{Fonctions Unix :}
     \begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
@@ -95,16 +95,16 @@
           val readdir : dir_handle -> string  (* lit une entree *)
           val closedir : dir_handle -> unit
     \end{lstlisting}
-    
+
     \subtt{Boucle de lecture des entrées du répertoire}
     \begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
     let read_dir dirname =
       let rec loop dir_handle acc =
-        try  
+        try
           let nfile = Unix.readdir dir_handle in
             loop dir_handle (nfile :: acc)
         with End_of_file -> acc in
-        
+
       let dir_handle = Unix.opendir dirname in (* Ouverture *)
       let files = loop dir_handle [] in          (* Lecture *)
       Unix.closedir direname;                  (* Fermeture *)
@@ -116,15 +116,15 @@
         \begin{lstlisting}
     let exec_cmd cmd = match cmd with
         | Ls diropt ->
-          let dirname = match diropt with 
-            | None -> Filename.current_dir_name 
+          let dirname = match diropt with
+            | None -> Filename.current_dir_name
             | Some d -> d  in
           (* Lecture *)
           let files = read_dir dirname in
           (* Filtrage *)
           let files =  List.filter
               (fun file ->
-                not (file = Filename.parent_dir_name || 
+                not (file = Filename.parent_dir_name ||
                      file = Filename.current_dir_name))
               all_files in
           (* Concatenation *)
@@ -157,45 +157,64 @@
 
 \begin{frame}[fragile]{Opérations sur les répertoires : \texttt{ls}}
     \subtt{Ajouter l'option \texttt{-i} pour \texttt{ls}}
-    
+
     \includegraphics[width=0.5\textwidth]{slides/images/shell_ls_inode.png}
-    
-    \subttt{Fonctions disponibles : }
+
     \begin{lstlisting}
-    (* Information sur le fichier *)
-    val stat : string -> stats
-    (* Comme [stat] avec un descripteur de fichier *)
-    val fstat : file_descr -> stats
-    (* Donne l'information sur un lien symbolique *)
-    val lstat : string -> stats
+      type stats = {
+	st_dev : int; (* Numéro de périphérique *)
+	st_ino : int; (* Numéro d'Inode *)
+	st_kind : file_kind; (* Type de fichiers (S_REG, S_DIR) *)
+	st_perm : file_perm; (* Droits *)
+	... }
+
+      (* Information sur le fichier *)
+      val stat : string -> stats
+      (* Comme [stat] avec un descripteur de fichier *)
+      val fstat : file_descr -> stats
+      (* Donne l'information sur un lien symbolique *)
+      val lstat : string -> stats
     \end{lstlisting}
-    
+
 \end{frame}
 
 \subsection{Gestion des erreurs Unix et boucle principale de lecture}
+
+\begin{frame}[fragile]{Gestion des erreurs}
+  \texttt{Unix} fournit :
+    \begin{lstlisting}
+         Unix.handle_unix_error : ('a -> 'b) -> 'a -> 'b
+    \end{lstlisting}
+
+    \begin{itemize}[label=\ding{114}]
+       \item applique le premier argument (notre programme) au second
+         et retourne le résultat.
+       \item Si une exception \texttt{Unix.Unix\_error} est levée :
+         \begin{itemize}[label=\ding{118}]
+         \item affiche une message décrivant l'erreur
+         \item le programme termine avec le code d'erreur 2
+         \end{itemize}
+    \end{itemize}
+\end{frame}
 
 \begin{frame}[fragile]{Boucle principale de lecture : premier essai}
 
     \begin{lstlisting}
      let minishell () =
-      try
-        while true do
+       try
+       while true do
           let cmd_line = Stdlib.input_line Stdlib.stdin in
           try
-            let cmd : Command.t = Parser.parse cmd_line in
-            Command.exec_cmd cmd
+            let cmd = parse cmd_line in
+            exec_cmd cmd
           with
-          | Parser.Parsing_error err -> Parser.print_error err
-          | Parser.Empty_line -> ()
+          | Parsing_error err -> print_error err
+          | Empty_line -> ()
         done
       with End_of_file -> ()
+
+      let () = Unix.handle_unix_error minishell ()
+
     \end{lstlisting}
 
-\end{frame}
-
-\begin{frame}[fragile]{Gestion des erreurs}
-    
-    \begin{lstlisting}
-         Unix.handle_unix_error : ('a -> 'b) -> 'a -> 'b
-    \end{lstlisting}
 \end{frame}

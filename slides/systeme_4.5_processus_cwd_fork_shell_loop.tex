@@ -1,5 +1,3 @@
-
-
 \begin{frame}{Processus}
 
 \begin{columns}
@@ -13,19 +11,50 @@
 
 \subtt{État d'un processus}
 
-\begin{itemize}[label=$-$]
-    \item Registres processeur
-    \item Table des descripteurs fichiers
-    \item Répertoire courant
-    \item Variables d'environnement
-\end{itemize}
+ \begin{itemize}[label=$-$]
+     \item Registres processeur
+     \item Table des descripteurs fichiers
+     \item Répertoire courant
+     \item Variables d'environnement
+ \end{itemize}
 \end{columns}
 
 \end{frame}
 
+\begin{frame}{\texttt{fork}}
+
+    fonction Unix.fork : unit -> int
+
+    crée un nouveau process avec le même état
+\end{frame}
+
+\begin{frame}[fragile]{Boucle de lecture avec gestion des erreurs}
+\begin{lstlisting}
+    let minishell () =
+        try
+           while true do
+             (* Lecture de l'entree standard *)
+             let cmd = input_line Stdin.stdin in
+             match Unix.fork () with
+               | 0 ->
+                 (* Processus fils *)
+                 let cmd = parse cmd_line in
+                 exec_cmd cmd;
+                 exit 0
+               | pid_son ->
+                 (* Processus pere *)
+                 let pid, status = Unix.wait() in
+                 (* Affiche le status de sortie du processus père *)
+                 print_status "Program" status
+          done
+          with End_of_file -> ()
+
+    let () = Unix.handle_unix_error minishell ()
+\end{lstlisting}
+\end{frame}
 
 \begin{frame}[fragile]{AST évolué}
-    \begin{itemize}[leftmargin=-10pt] 
+    \begin{itemize}[leftmargin=-10pt]
          \item
         \begin{lstlisting}
             type cmd_kind =
@@ -36,7 +65,31 @@
                 | In of string (* > *)
                 | Out of string (* < *)
             type command = cmd_kind * redirection list
-            type t = 
+            type t =
+                | Command of command
+                | Pipe of t * t (* | *)
+                | And of t * t (* exit status *)
+                | Or of t * t
+            val execute : t -> unit
+        \end{lstlisting}
+    \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{AST évolué}
+    \begin{itemize}[leftmargin=-10pt]
+         \item
+        \begin{lstlisting}
+            type cmd_kind =
+                | Internal of command (* les commandes precedentes *)
+                | External of string list (* la triche avec execv *)
+                | Cd of string (* getcwd / chdir *)
+            type redirection =
+                | In of string (* > *)
+                | Out of string (* < *)
+            type command = cmd_kind * redirection list
+            type t =
                 | Command of command
                 | Pipe of t * t (* | *)
                 | And of t * t (* exit status *)
@@ -54,7 +107,7 @@ let minishell () =
      Printf.printf "%s> %!" (Unix.getcwd ());
      while true do
        let cmd = input_line Stdlib.stdin in
-       try 
+       try
          let cmd = Ast.parse cmd in
          let code = interprete cmd in
          Printf.printf "%s (%d)> %!" (Unix.getcwd ()) code
@@ -67,11 +120,11 @@ let minishell () =
 \end{frame}
 
 \begin{frame}{}
-    
+
 \end{frame}
 
 \begin{frame}{\texttt{cd}}
-    
+
 \end{frame}
 
 \begin{frame}{\texttt{fork}}

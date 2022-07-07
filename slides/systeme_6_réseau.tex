@@ -9,13 +9,13 @@ type host_entry = {
 val gethostbyname : string -> host_entry
 
 type socket_domain = PF_UNIX | PF_INET | PF_INET6
-type socket_type = 
-    | SOCK_STREAM (* TCP *) 
+type socket_type =
+    | SOCK_STREAM (* TCP *)
     | SOCK_DGRAM  (* UDP *)
 val socket : ?cloexec:bool ->
        socket_domain -> socket_type -> int -> file_descr
 
-type sockaddr = 
+type sockaddr =
     | ADDR_UNIX of string
     | ADDR_INET of inet_addr * int
 val connect : file_descr -> sockaddr -> unit
@@ -29,15 +29,15 @@ val connect : file_descr -> sockaddr -> unit
     \centering
     \includegraphics[width=\textwidth]{slides/images/unixsocket.png}
 \end{figure}
-    
+
 \end{frame}
 
 \begin{frame}[fragile]{Réseau - côté serveur}
 
 \begin{lstlisting}
-(* attache la socket à une adresse *)
+(* attache la socket a une adresse *)
 val bind : file_descr -> sockaddr -> unit
-(* met la socket en mode d'écoute *)
+(* met la socket en mode d'ecoute *)
 val listen : file_descr -> int -> unit
 (* accepte une nouvelle connexion *)
 val accept : ?cloexec:bool -> file_descr -> file_descr * sockaddr
@@ -45,9 +45,9 @@ val accept : ?cloexec:bool -> file_descr -> file_descr * sockaddr
 
 \end{frame}
 
-    
+
 \begin{frame}[fragile]{Réseau - côté serveur - exemple}
-    
+
 \begin{figure}
     \centering
     \includegraphics[width=0.9\textwidth]{slides/images/unixsocketserver.png}

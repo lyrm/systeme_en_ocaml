@@ -1,4 +1,4 @@
-let print_status program status =
+let _print_status program status =
   match status with
   | Unix.WEXITED 255 -> ()
   | WEXITED status -> Printf.printf "%s exited with code %d\n%!" program status
@@ -51,7 +51,7 @@ let rec interprete : Ast.t -> int = function
   | Command (cmd, redirections) ->
       fork_and_wait (fun () ->
           List.iter setup_redirection redirections;
-          Unix.handle_unix_error exec_cmd cmd;
+          exec_cmd cmd;
           0)
   | Pipe (a, b) ->
       fork_and_wait (fun () ->
@@ -89,4 +89,4 @@ let minishell () =
     done
   with End_of_file -> ()
 
-let () = minishell ()
+let () = Unix.handle_unix_error minishell ()
