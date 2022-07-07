@@ -30,6 +30,8 @@ Plusieurs stratégies:
 \begin{frame}[fragile]{Exemple: \texttt{cp} asynchrone avec \texttt{Lwt\_unix}}
 
 \begin{lstlisting}
+open Lwt.Syntax
+
 let rec perform_copy_lwt src dst =
   let* n = Lwt_unix.read src buffer 0 buf_size in
   if n = buf_size then

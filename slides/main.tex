@@ -50,7 +50,16 @@
 \usepackage{pifont}
 \usepackage{hyperref}
 
-\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+\AtBeginSubsection[]
+{
+ \begin{frame}
+  \vfill
+  \centering
+  %\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsubsectionhead\par%
+  %\end{beamercolorbox}
+  \vfill
+  \end{frame}}
 
 \setbeamertemplate{blocks}[rounded][shadow=true]
 \setbeamertemplate{itemize subitem}[bullet]
@@ -70,19 +79,33 @@
 \input{slides/intro}
 
 \section{Programmation système en OCaml}
-
-\subsection{Introduction}
 \input{slides/systeme_1_intro}
 
-\subsection{Manipulation de fichiers et répertoire}
+\subsection{Manipulation de fichiers et répertoires}
 \input{slides/systeme_2_fichiers}
-\input{slides/systeme_3_réseau}
-\input{slides/systeme_4_en_vrai}
+\input{slides/systeme_3_cat}
+\input{slides/systeme_4_rm_ln_mkdir_ls}
+\subsection{Redirection et tube}
+\input{slides/systeme_4.5_processus_cwd_fork_shell_loop}
 
+\subsection{Manipulation de fichiers et répertoires}
+\input{slides/systeme_5_redirection_tube}
+
+\subsection{Interlude réseau}
+\input{slides/systeme_6_réseau}
+
+\subsection{Programme système avancée}
+\input{slides/systeme_7_en_vrai}
+
+\section{OCaml dans la vraie vie}
 \input{slides/irl_0_intro}
+\subsection{Mirage}
 \input{slides/irl_1_mirage}
+\subsection{OCaml Multicore}
 \input{slides/irl_2_ocaml_5}
+\subsection{Vérification de propriétés avec QCheck}
 \input{slides/irl_3_qcheck}
+\subsection{Écosystème}
 \input{slides/irl_4_ecosystème}
 
 \end{document}
