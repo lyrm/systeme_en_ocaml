@@ -1,27 +1,5 @@
 
-\begin{frame}{Introduction : mini-shell}
-
-    \subtt{Objectif :} programmer un shell en utilisant le module \texttt{Unix} 
-    
-    \todo{Screenshot d'un shell}
-    
-    Les fonctionnalités et commandes que l'on va implémenter :
-    \begin{itemize}[label=\small\ding{114}]
-        \item<1-> Manipulation des fichiers : \texttt{ls}, \texttt{mkdir}, \texttt{ln}, \texttt{cat}
-        \item<1-> Modification du répertoire courant : \texttt{cd}
-        \item<1-> Processus et environnement % entrée/sortie standard, fork
-        \item<1-> Re-directions de flux :  $>$, $<$
-        \item<1-> Tube : $|$
-
-        %\item<2-> Pour aller plus loin : 
-        %    \begin{itemize}[label=$-$]
-        %        \item un peu de \textit{réseau}
-        %        \item les sur-couches au module \texttt{Unix} : \textit{Lwt / Bos}
-        %    \end{itemize}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}{Programmation système en OCaml}
+\begin{frame}{Introduction : programmation système en OCaml}
 
     \begin{itemize}[label=\small\ding{114}]
         \item Des modules bas niveau (cf \url{ocaml.org/api})
@@ -43,5 +21,28 @@
 \begin{frame}{Module \texttt{Sys}}
     \begin{itemize}[label=\small\ding{114}]
         \item \wip
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Introduction : mini-shell}
+
+    \subtt{Objectif :} programmer un shell en utilisant le module \texttt{Unix} 
+    
+    \todo{Screenshot d'un shell}
+    
+    Les fonctionnalités et commandes que l'on va implémenter :
+    \begin{itemize}[label=\small\ding{114}]
+        \item<1-> Manipulation des fichiers : \texttt{ls}, \texttt{mkdir}, \texttt{ln}, \texttt{cat}
+        \item<1-> Modification du répertoire courant : \texttt{cd}
+        \item<1-> Processus et environnement % entrée/sortie standard, fork
+        \item<1-> Re-directions de flux :  $>$, $<$
+        \item<1-> Tube : $|$
+
+        %\item<2-> Pour aller plus loin : 
+        %    \begin{itemize}[label=$-$]
+        %        \item un peu de \textit{réseau}
+        %        \item les sur-couches au module \texttt{Unix} : \textit{Lwt / Bos}
+        %    \end{itemize}
     \end{itemize}
 \end{frame}
