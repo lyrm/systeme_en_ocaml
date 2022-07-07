@@ -7,14 +7,11 @@ let buffer = Bytes.create buf_size
 
 let ops = ref []
 
-let rec perform_copy_lwt i src dst =
+let rec perform_copy_lwt src dst =
   let* n = Lwt_unix.read src buffer 0 buf_size in
-  ops := `R i :: !ops;
   if n = buf_size then
-    (Lwt.async (fun () -> 
-      let+ _ = Lwt_unix.write dst buffer 0 n |> Lwt.map ignore in
-      ops := `W i :: !ops;);
-    perform_copy_lwt (i + 1) src dst)
+    let* _ = Lwt_unix.write dst buffer 0 n in
+    perform_copy_lwt src dst
   else
     let* _ = Lwt_unix.write dst buffer 0 n in
     Lwt.return (`Ok ())
@@ -23,7 +20,7 @@ let cp_lwt src dest =
   Lwt_main.run @@
   let* fd_src = Lwt_unix.openfile src [O_RDONLY] 0 in 
   let* fd_dst = Lwt_unix.openfile dest [O_RDWR; O_CREAT; O_TRUNC] 0o640 in
-  perform_copy_lwt 0 fd_src fd_dst
+  perform_copy_lwt fd_src fd_dst
   
 
 let rec perform_copy src dst =
