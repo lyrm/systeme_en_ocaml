@@ -30,9 +30,9 @@ let parse_c str =
 let rec parse_redirections = function
   | [] -> []
   | [ _ ] -> failwith "parse error"
-  | Str.Delim ">" :: Str.Text file :: rest ->
+  | Str.Delim " > " :: Str.Text file :: rest ->
       Out file :: parse_redirections rest
-  | Str.Delim "<" :: Str.Text file :: rest -> In file :: parse_redirections rest
+  | Str.Delim " < " :: Str.Text file :: rest -> In file :: parse_redirections rest
   | _ -> failwith "parse error"
 
 let parse_cmd str =
