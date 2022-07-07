@@ -5,8 +5,6 @@ let buf_size = 65536
 
 let buffer = Bytes.create buf_size 
 
-let ops = ref []
-
 let rec perform_copy_lwt src dst =
   let* n = Lwt_unix.read src buffer 0 buf_size in
   if n = buf_size then
