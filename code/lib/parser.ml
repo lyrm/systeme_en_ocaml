@@ -1,5 +1,4 @@
 exception Empty_line
-exception Undefined_command
 
 (** [split_cmd_args line] découpe la ligne de commande à chaque espace pour extraire :
     - la commande
@@ -13,21 +12,6 @@ let split_cmd_args line =
   | [] -> raise Empty_line
   | cmd :: args -> (cmd, args)
 
-(** Les arguments d'une commande peuvent être de 3 types :
-
-    - déterminés par leur position dans leur ligne de commande.
-    Ex : dans [cp file1 file2] le rôle de [file1] et [file2] est déterminée par leur position.
-
-    - une paire nom et valeur,
-    Ex : la paire [(mode, perm)] dans [mkdir dir --mode perm]
-
-    - un drapeau (équivaut à une valeur booléenne).
-    Ex : [cp --help] *)
-type 'a args_type =
-  | Pos of int * string
-  | Named of string * string
-  | Flag of string
-
 (** [is_name str] retourne [true] si [str] a une longueur de 2 et commence par "-". *)
 let is_name str = String.length str == 2 && String.get str 0 == '-'
 
@@ -35,23 +19,16 @@ let get_name str = String.sub str 1 (String.length str - 1)
 
 (** Gestions des erreurs de parsing. *)
 type parsing_error =
-  | Unrecognized_Flag of string
   | Unrecognized_Name of string
   | Missing_arg of string
-  | Missing_positional_arg of string
   | Too_many_arguments
   | Invalid_named_value of (string * string)
   | Undefined_command
 
 exception Parsing_error of parsing_error
 
-let exn_unrecognized_flag flag = Parsing_error (Unrecognized_Flag flag)
 let exn_unrecognized_name name = Parsing_error (Unrecognized_Name name)
 let exn_missing_arg name = Parsing_error (Missing_arg name)
-
-let exn_missing_positional_arg name =
-  Parsing_error (Missing_positional_arg name)
-
 let exn_too_many_arguments = Parsing_error Too_many_arguments
 
 let exn_invalid_named_value_argument name value =
@@ -60,11 +37,8 @@ let exn_invalid_named_value_argument name value =
 let print_error err =
   let err_msg =
     match err with
-    | Unrecognized_Flag flag -> "Unrecognized flag \"" ^ flag ^ "\""
     | Unrecognized_Name name -> "Unrecognized argument name \"-" ^ name ^ "\""
     | Missing_arg name -> "Missing argument \"" ^ name ^ "\""
-    | Missing_positional_arg name ->
-        "Missing positional argument \"" ^ name ^ "\""
     | Too_many_arguments -> "Too many arguments"
     | Invalid_named_value (name, value) ->
         "Invalid value \"" ^ value ^ "\" for \"" ^ name ^ "\""

@@ -1,5 +1,5 @@
 type t =
-    Mkdir of string * int option
+  | Mkdir of string * int option
   | Rm of string * bool
   | Ln of string * string * bool
   | Mv of string * string

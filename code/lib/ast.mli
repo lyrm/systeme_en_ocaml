@@ -16,5 +16,4 @@ type t =
   | Or of t * t
 
 val parse : string -> t
-
 val to_string : t -> string

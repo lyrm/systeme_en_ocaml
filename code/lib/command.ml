@@ -1,19 +1,3 @@
-(**
-   les commandes :
-   - mkdir
-   - rm / rm dir
-   - ln / ln -s
-   - echo
-   - ls
-
-   - cp et cp -r
-
-   - |
-   - > <
-
-   - ping/echo si on veut faire du réseau
-*)
-
 type t =
   | Mkdir of string * int option
   | Rm of string * bool
@@ -23,8 +7,6 @@ type t =
   | Ls of string option
   | Cat of string list
 
-(* On ne gère pas les erreurs ici, on utilise [Unix.handle_unix_error]
-   pour les gérer. *)
 let files_in_dir diropt =
   let dirname =
     match diropt with None -> Filename.current_dir_name | Some d -> d
@@ -50,12 +32,11 @@ let write_stdout text =
   let rec loop ind to_write =
     let len = min max_len to_write in
     let written = Unix.single_write Unix.stdout text ind len in
-    if written = max_len then
-      loop (ind + written) (to_write - written)
+    if written = max_len then loop (ind + written) (to_write - written)
   in
   loop 0 (Bytes.length text)
 
- let write_fd_stdout fd_in =
+let write_fd_stdout fd_in =
   let buffer_size = 8192 in
   let buffer = Bytes.create buffer_size in
   let rec copy_loop () =
@@ -67,9 +48,7 @@ let write_stdout text =
   in
   copy_loop ()
 
-(** TODO : lecture sur stdin *)
-
-let exec_cmd (* ~verbose *) = function
+let exec_cmd = function
   | Cat files -> (
       match files with
       | [] -> write_fd_stdout Unix.stdin

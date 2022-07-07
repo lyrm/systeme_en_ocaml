@@ -32,7 +32,8 @@ let rec parse_redirections = function
   | [ _ ] -> failwith "parse error"
   | Str.Delim " > " :: Str.Text file :: rest ->
       Out file :: parse_redirections rest
-  | Str.Delim " < " :: Str.Text file :: rest -> In file :: parse_redirections rest
+  | Str.Delim " < " :: Str.Text file :: rest ->
+      In file :: parse_redirections rest
   | _ -> failwith "parse error"
 
 let parse_cmd str =
@@ -61,7 +62,7 @@ let rec parse str =
   | _ -> failwith ""
 
 let c_to_string = function
-  | Internal c -> "(internal)"
+  | Internal _c -> "(internal)"
   | External c -> String.concat " " c
   | Cd c -> "cd " ^ c
 
