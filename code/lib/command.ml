@@ -43,25 +43,26 @@ let files_in_dir diropt =
       not (file = Filename.parent_dir_name || file = Filename.current_dir_name))
     all_files
 
+(* Écrit par bloc de 8192 caractères *)
 let write_stdout text =
   let text = Bytes.of_string text in
-  let max_length = 8192 in
-  let rec loop ind prev_written =
-    let length = min max_length (Bytes.length text) in
-    let written = Unix.single_write Unix.stdout text ind length in
-    if written + prev_written < Bytes.length text then
-      loop (ind + written) (prev_written + written)
+  let max_len = 8192 in
+  let rec loop ind to_write =
+    let len = min max_len to_write in
+    let written = Unix.single_write Unix.stdout text ind len in
+    if written = max_len then
+      loop (ind + written) (to_write - written)
   in
-  loop 0 0
+  loop 0 (Bytes.length text)
 
-let write_fd_stdout fd_in =
+ let write_fd_stdout fd_in =
   let buffer_size = 8192 in
   let buffer = Bytes.create buffer_size in
   let rec copy_loop () =
     match Unix.read fd_in buffer 0 buffer_size with
     | 0 -> ()
     | r ->
-        ignore (Unix.write Unix.stdout buffer 0 r);
+        ignore (Unix.single_write Unix.stdout buffer 0 r);
         copy_loop ()
   in
   copy_loop ()
