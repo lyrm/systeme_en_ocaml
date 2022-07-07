@@ -223,6 +223,19 @@ let build_cat cmd_line =
   in
   Command.Cat files
 
+let build_mv cmd_line =
+  let source =
+    match cmd_line.positional.(0) with
+    | Some n -> n
+    | None -> raise (exn_missing_arg "source filename")
+  in
+  let dest =
+    match cmd_line.positional.(0) with
+    | Some n -> n
+    | None -> raise (exn_missing_arg "destination filename")
+  in
+  Command.Mv (source, dest)
+
 (** [parse cmd_line] parse la ligne de commande [cmd_line], càd, elle
    est découpée pour séparer la commande et les arguments puis, les
    arguments sont parsées. Finalement, on construit le type
@@ -263,4 +276,9 @@ let parse cmd_line =
         init_cmd_line cmd ~flags:[] ~named:[] ~positional:10 |> parse_args args
       in
       build_cat cmd_line
+  | "mv" ->
+      let cmd_line =
+        init_cmd_line cmd ~flags:[] ~named:[] ~positional:2 |> parse_args args
+      in
+      build_mv cmd_line
   | _ -> raise (Parsing_error Undefined_command)

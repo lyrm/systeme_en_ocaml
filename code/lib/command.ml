@@ -18,21 +18,26 @@ type t =
   | Mkdir of string * int option
   | Rm of string * bool
   | Ln of string * string * bool
+  | Mv of string * string
   | Echo of string
   | Ls of string option
   | Cat of string list
 
 (* On ne gère pas les erreurs ici, on utilise [Unix.handle_unix_error]
    pour les gérer. *)
-let all_files_in_dir dirname =
-  let rec read dir acc =
-    try read dir (Unix.readdir dir :: acc)
-    with End_of_file ->
-      Unix.closedir dir;
-      acc
+let files_in_dir diropt =
+  let dirname =
+    match diropt with None -> Filename.current_dir_name | Some d -> d
   in
-  let dir = Unix.opendir dirname in
-  let all_files = read dir [] in
+  let rec read dir_handle acc =
+    try
+      let nfile = Unix.readdir dir_handle in
+      read dir_handle (nfile :: acc)
+    with End_of_file -> acc
+  in
+  let dir_handle = Unix.opendir dirname in
+  let all_files = read dir_handle [] in
+  Unix.closedir dir_handle;
   List.filter
     (fun file ->
       not (file = Filename.parent_dir_name || file = Filename.current_dir_name))
@@ -49,14 +54,14 @@ let write_stdout text =
   in
   loop 0 0
 
-let copy_file fd_in fd_out =
+let write_fd_stdout fd_in =
   let buffer_size = 8192 in
   let buffer = Bytes.create buffer_size in
   let rec copy_loop () =
     match Unix.read fd_in buffer 0 buffer_size with
     | 0 -> ()
     | r ->
-        ignore (Unix.write fd_out buffer 0 r);
+        ignore (Unix.write Unix.stdout buffer 0 r);
         copy_loop ()
   in
   copy_loop ()
@@ -64,28 +69,26 @@ let copy_file fd_in fd_out =
 (** TODO : lecture sur stdin *)
 
 let exec_cmd (* ~verbose *) = function
-  | Mkdir (filename, perm_opt) ->
-      let perm = match perm_opt with None -> 0o775 | Some p -> p in
-      Unix.mkdir filename perm
-  | Rm (filename, recursive) ->
-      if recursive then Unix.rmdir filename else Unix.unlink filename
-  | Ln (source, dest, symbolic) ->
-      if symbolic then Unix.symlink source dest else Unix.link source dest
-  | Echo text -> write_stdout (text ^ "\n")
-  | Ls dirname ->
-      let dirname =
-        match dirname with None -> Filename.current_dir_name | Some d -> d
-      in
-      let all_files = all_files_in_dir dirname |> String.concat "\t" in
-      write_stdout (all_files ^ "\n")
   | Cat files -> (
       match files with
-      | [] -> copy_file Unix.stdin Unix.stdout
+      | [] -> write_fd_stdout Unix.stdin
       | _ ->
           List.iter
             (fun file ->
+              (* La permission ne sert qu'en cas de création du fichier *)
               let fd_in = Unix.openfile file [ Unix.O_RDONLY ] 0 in
-              let fd_out = Unix.stdout in
-              copy_file fd_in fd_out;
+              write_fd_stdout fd_in;
               Unix.close fd_in)
             files)
+  | Ln (source, dest, symbolic) ->
+      if symbolic then Unix.symlink source dest else Unix.link source dest
+  | Mv (source, dest) -> Unix.rename source dest
+  | Rm (filename, recursive) ->
+      if recursive then Unix.rmdir filename else Unix.unlink filename
+  | Mkdir (filename, perm_opt) ->
+      let perm = match perm_opt with None -> 0o775 | Some p -> p in
+      Unix.mkdir filename perm
+  | Echo text -> write_stdout (text ^ "\n")
+  | Ls diropt ->
+      let all_files = files_in_dir diropt |> String.concat "\t" in
+      write_stdout (all_files ^ "\n")
