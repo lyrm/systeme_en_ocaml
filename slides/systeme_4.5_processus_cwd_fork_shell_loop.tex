@@ -23,29 +23,14 @@
 
 \end{frame}
 
+\begin{frame}{\texttt{fork}}
+    
+    fonction Unix.fork : unit -> int
 
-\begin{frame}[fragile]{AST évolué}
-    \begin{itemize}[leftmargin=-10pt] 
-         \item
-        \begin{lstlisting}
-            type cmd_kind =
-                | Internal of command (* les commandes precedentes *)
-                | External of string list (* la triche avec execv *)
-                | Cd of string (* getcwd / chdir *)
-            type redirection =
-                | In of string (* > *)
-                | Out of string (* < *)
-            type command = cmd_kind * redirection list
-            type t = 
-                | Command of command
-                | Pipe of t * t (* | *)
-                | And of t * t (* exit status *)
-                | Or of t * t
-            val execute : t -> unit
-        \end{lstlisting}
-    \end{itemize}
-
+    crée un nouveau process avec le même état    
 \end{frame}
+
+
 
 \begin{frame}[fragile]{Nouvelle boucle de lecture}
 \begin{lstlisting}
@@ -64,10 +49,6 @@ let minishell () =
      done
    with End_of_file -> ()
 \end{lstlisting}
-\end{frame}
-
-\begin{frame}{}
-    
 \end{frame}
 
 \begin{frame}{\texttt{cd}}
