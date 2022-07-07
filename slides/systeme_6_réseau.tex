@@ -18,7 +18,7 @@ val socket : ?cloexec:bool ->
 type sockaddr =
     | ADDR_UNIX of string
     | ADDR_INET of inet_addr * int
-val connect : file_descr -> sockaddr -> unit
+val connect : file_de scr -> sockaddr -> unit
 \end{lstlisting}
 
 \end{frame}
