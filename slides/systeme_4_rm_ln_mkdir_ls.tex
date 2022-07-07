@@ -181,12 +181,21 @@
 \subsection{Gestion des erreurs Unix et boucle principale de lecture}
 
 \begin{frame}[fragile]{Gestion des erreurs}
-  \texttt{Unix} fournit :
-    \begin{lstlisting}
-         Unix.handle_unix_error : ('a -> 'b) -> 'a -> 'b
-    \end{lstlisting}
-
-    \begin{itemize}[label=\ding{114}]
+  \subtt{En C}, pour chaque appel système :
+  \begin{lstlisting}[language=C]
+    if (unappel() == -1) {
+      printf("unappel() a échoué\n");
+      if (errno == ...) { ... }}
+  \end{lstlisting}
+  \pause
+  \subtt{Avec OCaml,} une fois à la fin du programme
+  \begin{lstlisting}
+    type error = | E2BIG | EACCES | EAGAIN | EBADF | ...
+    val handle_unix_error : ('a -> 'b) -> 'a -> 'b
+  \end{lstlisting}
+  \pause
+  \footnotesize
+  \begin{itemize}[label=\small\ding{114}]
        \item applique le premier argument (notre programme) au second
          et retourne le résultat.
        \item Si une exception \texttt{Unix.Unix\_error} est levée :
@@ -198,11 +207,14 @@
 \end{frame}
 
 \begin{frame}[fragile]{Boucle principale de lecture : premier essai}
-
+  \begin{itemize}
+    \item<1->
     \begin{lstlisting}
-     let minishell () =
-       try
-       while true do
+      let minishell () =
+    \end{lstlisting}
+    \item<2-> \begin{itemize} \item \begin{lstlisting}
+      try
+        while true do
           let cmd_line = Stdlib.input_line Stdlib.stdin in
           try
             let cmd = parse cmd_line in
@@ -212,9 +224,10 @@
           | Empty_line -> ()
         done
       with End_of_file -> ()
-
+    \end{lstlisting} \end{itemize}
+    \item <1->
+    \begin{lstlisting}
       let () = Unix.handle_unix_error minishell ()
-
     \end{lstlisting}
-
+    \end{itemize}
 \end{frame}
