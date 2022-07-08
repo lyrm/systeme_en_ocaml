@@ -119,7 +119,15 @@ end
 \end{lstlisting}
 
 \end{frame}
-
+\begin{frame}{Algorithme de la boulangerie}
+    \subtt{Ses avantages :}
+    \begin{itemize}[label=\small\ding{114}]
+        \item plus que 2 fils d'exécution
+        \item ne nécessite pas d'opérations atomiques
+        \item fonctionne sur le principe d'une file d'attente avec tickets numérotés
+    \end{itemize}
+    
+\end{frame}
 \begin{frame}[fragile]{Algorithme de la boulangerie}
 \begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
   type t =
