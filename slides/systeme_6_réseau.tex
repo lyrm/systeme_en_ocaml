@@ -18,7 +18,7 @@ val socket : ?cloexec:bool ->
 type sockaddr =
     | ADDR_UNIX of string
     | ADDR_INET of inet_addr * int
-val connect : file_de scr -> sockaddr -> unit
+val connect : file_descr -> sockaddr -> unit
 \end{lstlisting}
 
 \end{frame}
@@ -35,12 +35,13 @@ val connect : file_de scr -> sockaddr -> unit
 \begin{frame}[fragile]{Réseau - côté serveur}
 
 \begin{lstlisting}
-(* attache la socket a une adresse *)
+(* attache la socket à une adresse *)
 val bind : file_descr -> sockaddr -> unit
-(* met la socket en mode d'ecoute *)
+(* met la socket en mode d'écoute *)
 val listen : file_descr -> int -> unit
 (* accepte une nouvelle connexion *)
-val accept : ?cloexec:bool -> file_descr -> file_descr * sockaddr
+val accept : 
+    ?cloexec:bool -> file_descr -> file_descr * sockaddr
 \end{lstlisting}
 
 \end{frame}

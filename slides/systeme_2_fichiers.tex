@@ -1,7 +1,6 @@
 \begin{frame}[fragile]{Manipulation de fichiers et répertoire : interface du mini-shell}
     \begin{itemize}[leftmargin=-12pt]
     \item<1->Première version de l'AST des commandes :
-        \todo{reorganiser dans l'ordre le plus pertinent en fonction de la suite}
         \begin{lstlisting}[breaklines=false]
             type command =
               | Cat of string list           (* cat files *)  
@@ -12,21 +11,21 @@
               | Ls of string option          (* ls [filename] *)  
         \end{lstlisting}
         
-    \item<2-> Parser, et interpréteur de commandes :
+    \item<2-> Parser, et exécuteur de commandes :
          \begin{lstlisting}
             val parse : string -> command
-            val exec_command : command -> unit 
+            val exec_cmd : command -> unit 
         \end{lstlisting}
     \end{itemize}
 \end{frame}  
 
-\begin{frame}[fragile]{Parseur et interpréteur}
+\begin{frame}[fragile]{Parseur et exécuteur de commande}
 
     \begin{itemize}[label=\small\ding{114}]
     \item Parseur : plusieurs solutions (\texttt{Args}, \texttt{Angstrom} etc..)
-    \item Interpréteur : 
+    \item Exécuteur de commandes : 
       \begin{lstlisting}
-            let exec_command cmd = 
+            let exec_cmd cmd = 
                 match cmd with
                 | Cat filename              -> failwith "todo"
                 | Ln (source, dest, symb)   -> failwith "todo"

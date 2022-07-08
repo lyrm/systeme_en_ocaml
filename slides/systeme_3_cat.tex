@@ -1,6 +1,5 @@
 \begin{frame}[fragile]{Lecture et écriture de fichier (\texttt{cat})}
     \texttt{cat f1 f2 f3}~... : concatène le contenu des fichiers en entrée et les écrit dans la sortie standard.
-    \pause
     
     \subtt{Exemple}
     
@@ -55,21 +54,21 @@
 
 \begin{frame}[fragile]{Lecture et écriture de fichier (\texttt{cat})}
      \begin{itemize}[label=\small\ding{114}]
-         \item<1-> pour lire un fichier
+         \item pour lire un fichier
              \begin{lstlisting}
                     Unix.openfile filename [O_RDONLY] 0
              \end{lstlisting}
-         \item<2-> écrire en créant ou en effaçant un fichier existant
+         \item écrire en créant ou en effaçant un fichier existant
              \begin{lstlisting}
                 Unix.openfile filename 
                     [O_WRONLY; O_TRUNC; O_CREAT] 0o666
             \end{lstlisting}
-        \item<3-> écrire du code exécutable
+        \item écrire du code exécutable
              \begin{lstlisting}
                 Unix.openfile filename 
                     [O_WRONLY; O_TRUNC; O_CREAT] 0o777
             \end{lstlisting}
-        \item<4-> ajouter des données à la fin d'un fichier existant ou le créer vide sinon
+        \item ajouter des données à la fin d'un fichier existant ou le créer vide sinon
              \begin{lstlisting}
                 Unix.openfile filename 
                     [O_WRONLY; O_APPEND; O_CREAT] 0o666
@@ -86,7 +85,7 @@
                     List.iter (fun file ->
                       let fd_in = (* file_perm inutile ici *)
                         Unix.(openfile file [ O_RDONLY ] 0) in
-                      copy_file fd_in;
+                      write_fd_out fd_in;
                       Unix.close fd_in) files
                   | ... -> ...   
         \end{lstlisting}
@@ -95,12 +94,12 @@
                 let write_fd_stdout fd_in =
                   let buffer_size = 8192 in
                   let buffer = Bytes.create buffer_size in
-                  let rec copy_loop () =
+                  let rec loop () =
                     match Unix.read fd_in buffer 0 buffer_size with
                     | 0 -> ()
                     | r -> ignore (Unix.(single_write stdout buffer 0 r));
-                           copy_loop () in
-                  copy_loop ()
+                           loop () in
+                  loop ()
             \end{lstlisting}
      \end{itemize}
 \end{frame}

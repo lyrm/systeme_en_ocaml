@@ -4,7 +4,6 @@
     \texttt{rm f -f} : efface le fichier de nom f
 
     \texttt{mv f1 f2} : renomme le fichier de nom f1 en f2
-    \pause
 
     \subtt{Exemple}
 
@@ -58,7 +57,6 @@
      \texttt{rm -r dir} : efface le répertoire nommé \texttt{dir} et son contenu .
 
     \texttt{ls dir} : liste le contenu du répertoire \texttt{dir} ou du répertoire courant par défault sur la sortie standard.
-    \pause
 
     \subtt{Exemple}
 
@@ -214,9 +212,12 @@
     \item<2-> \begin{itemize} \item \begin{lstlisting}
       try
         while true do
+         (* Lire stdin *)
           let cmd_line = Stdlib.input_line Stdlib.stdin in
           try
+            (* Parser la commande *)
             let cmd = parse cmd_line in
+            (* Exécuter la commande *)
             exec_cmd cmd
           with
           | Parsing_error err -> print_error err

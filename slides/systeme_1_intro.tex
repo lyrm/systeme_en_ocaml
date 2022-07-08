@@ -10,32 +10,22 @@
         \item Des sur-couches sur le module \texttt{Unix} :
             \begin{itemize}[label=\small\ding{118}]
                 \item certaines fonctions de la \texttt{Sdtlib}, 
-                \item \texttt{Lwt.Unix}, 
-                \item \texttt{Bos} etc..
+                \item \texttt{Lwt.Unix}
             \end{itemize}
         \item Des modules utilitaires comme \texttt{Filename}
     \end{itemize}
 
 \end{frame}
 
-\begin{frame}{Module \texttt{Sys}}
-    \begin{itemize}[label=\small\ding{114}]
-        \item \wip
-    \end{itemize}
-\end{frame}
 
-
-\begin{frame}{Introduction : mini-shell}
+\begin{frame}{Introduction : le mini-shell}
 
     \subtt{Objectif :} programmer un shell en utilisant le module \texttt{Unix} 
     
-    \todo{Screenshot d'un shell}
-    
     Les fonctionnalités et commandes que l'on va implémenter :
     \begin{itemize}[label=\small\ding{114}]
-        \item<1-> Manipulation des fichiers : \texttt{ls}, \texttt{mkdir}, \texttt{ln}, \texttt{cat}
+        \item<1-> Manipulation des fichiers et répertoires : \texttt{ls}, \texttt{mkdir}, \texttt{ln}, \texttt{cat}
         \item<1-> Modification du répertoire courant : \texttt{cd}
-        \item<1-> Processus et environnement % entrée/sortie standard, fork
         \item<1-> Re-directions de flux :  $>$, $<$
         \item<1-> Tube : $|$
 

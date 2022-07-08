@@ -23,27 +23,21 @@ Plus d'informations: \url{https://github.com/c-cube/qcheck}
 \begin{frame}[fragile]{Exemple de test}
 
 \begin{lstlisting}
-
 let generateur = QCheck.(small_list small_int)
 \end{lstlisting}
 
-\subtt{Inverser une liste}
+\subtt{Exemple 1 : }
 \begin{lstlisting}
-let predicat entree sortie =
-    let entree = Array.of_list entree in
-    let sortie = Array.of_list sortie in
-    let n = Array.length entree in
-    assert (n = Array.length sortie);
-    for i = 0 to n - 1 do
-      assert (entree.(i) = sortie.(n-1-i))
-    done;
-    true
+    (* forall l, List.rev (List.rev l) = l *)
+    Test.make generateur 
+        (fun l ->  List.rev (List.rev l) = l)
 \end{lstlisting}
-
-\subtt{Trier une liste}
+\pause
+\subtt{Exemple 2 : }
 \begin{lstlisting}
-let predicat entree sortie =
-    List.sort Int.compare entree = sortie
+    (* forall l, int list, tri_fusion l est trié *)
+    Test.make generateur
+        (fun l ->  List.sort compare entree = tri_fusion entree)
 \end{lstlisting}
 
 \end{frame}
@@ -51,7 +45,7 @@ let predicat entree sortie =
 \begin{frame}[fragile]{Réduction}
     
 \begin{lstlisting}
-  let inverser lst = 
+  let rev lst = 
     if List.length lst >= 5 then lst
     else List.rev lst
 \end{lstlisting}

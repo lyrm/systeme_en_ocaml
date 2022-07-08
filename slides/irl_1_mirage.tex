@@ -49,7 +49,7 @@ end
     
 \begin{lstlisting}
 
-(* les dependances de notre application sont abstraites 
+(* Les dépendances de notre application sont abstraites 
    via le foncteur Make *)
 module Make (FS : Read_only_store) (Server : HTTP) = 
 struct
@@ -60,7 +60,8 @@ struct
 end
 
 (* pour les tests *)
-module Application = Make (In_memory_store) (Mock_http_server)
+module Application = 
+    Make (In_memory_store) (Mock_http_server)
 
 (* en production *)
 module Application = Make (EXT4) (Cohttp.Server)

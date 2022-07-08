@@ -20,10 +20,12 @@ val close_out : in_channel -> unit
 \end{frame}
 
 \begin{frame}{Programmation asynchrone}
+Le problème des appels en système de lecture/écriture : c'est bloquant.
+ 
 Plusieurs stratégies:
-\begin{itemize}
+\begin{itemize}[label=\small\ding{114}]
     \item Utiliser des fils d'exécution (threads)
-    \item \texttt{Lwt}: bibliothèque pour fils d'exécutions légers
+    \item \texttt{Lwt}: bibliothèque pour fils d'exécutions légers et coopératifs
 \end{itemize}
 \end{frame}
 
