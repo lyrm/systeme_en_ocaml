@@ -6,21 +6,22 @@
  (modules peterson))
 
 (executable
+ (public_name peterson_lock)
+ (name peterson_lock)
+ (package code)
+ (libraries threads)
+ (modules peterson_lock))
+
+(executable
  (public_name boulanger)
  (name boulanger)
  (package code)
- (modules boulanger))
-
-
-(executable
- (public_name main)
- (name main)
- (package code)
  (libraries threads)
- (modules main))
+ (modules boulanger))
 
 (executable
  (public_name buggy_test)
  (name buggy_test)
  (package code)
+ (libraries threads)
  (modules buggy_test))
