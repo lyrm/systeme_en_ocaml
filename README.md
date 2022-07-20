@@ -2,14 +2,15 @@
 Le contenu de ce repo a été créé pour une présentation de Juillet 2022 sur la programmation système en OCaml à destination des professeurs des nouvelles classes préparatoires MPI.
 
 # La présentation
-Disponible [ici](). TODO
+Disponible [ici](./slides/main.pdf). TODO
 
 # Installation
 ## OCaml 4.14.0
 ## OCaml 5.0.0 (exemples à decommenter dans les ... )
 
 # Questions ?
-Cf l'onglet discussion !
+
+Se référer à l'[onglet discussion](./discussions) !
 
 # Programmation système en OCaml
 
