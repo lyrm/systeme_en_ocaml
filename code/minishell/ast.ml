@@ -71,7 +71,7 @@ let rec parse str =
   match split "|" str with
   | [ str ] -> parse_and str
   | [ a; b ] -> Pipe (parse_and a, parse b)
-  | _ -> failwith ""
+  | _ -> raise Parser.Empty_line
 
 let c_to_string = function
   | Internal _c -> "(internal)"
