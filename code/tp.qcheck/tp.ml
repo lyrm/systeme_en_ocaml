@@ -1,46 +1,24 @@
+(* Définition des signatures des fonctions à implémenter *)
+module type Sujet = sig 
 
-module Implementations : sig 
-  
+  (* [inverse liste] renvoie [liste] dans l'ordre inverse *)
   val inverser : 'a list -> 'a list
 
-  val trier : ('a -> 'a -> int) -> 'a list -> 'a list
+  (* [trier compare liste] trie la liste [liste] d'entiers par ordre croissant *)
+  val trier : int list -> int list
 
-  val trier_unique : ('a -> 'a -> int) -> 'a list -> 'a list
+  (* [trier_unique compare liste] trie la liste [liste] d'entiers par ordre 
+     croissant tout en éliminant les doublons *)
+  val trier_unique : int list -> int list
 
-end = struct
-  
-  let inverser _ = failwith "a implementer"
-
-  let trier _ _ = failwith "a implementer"
-
-  let trier_unique _ _ = failwith "a implementer"
-  
 end
 
-(* module Implementations = struct
-  
-  let inverser lst = 
-    if List.length lst >= 5 then 
-      lst
-    else
-      List.rev lst
-
-  let trier compare lst =
-    if  List.fold_left Int.mul 1 lst > 67 then
-      lst
-    else
-      List.sort compare lst
-
-  let trier_unique compare lst =
-    if List.fold_left Int.add 0 lst == 34 then
-      lst
-    else
-      List.sort_uniq compare lst
-              
-end *)
-
+(* Définition des propriétés que doivent vérifier les fonctions implémentant 
+   l'interface Sujet *)
 module Predicats = struct
   
+  (* Vérification que la liste est bien inversée en écrivant la définition 
+     de l'inversion. *)
   let inverser_ok entree sortie =
     let entree = Array.of_list entree in
     let sortie = Array.of_list sortie in
@@ -51,6 +29,7 @@ module Predicats = struct
     done;
     true
 
+  (* Définition d'une liste triée *)
   let trier_ok entree sortie =
     let entree = Array.of_list entree in
     let sortie = Array.of_list sortie in
@@ -61,11 +40,49 @@ module Predicats = struct
     done;
     true
 
+  (* Vérification en comparant à un oracle (la bibliothèque) standard. *)
   let trier_unique_ok entree sortie =
     List.sort_uniq Int.compare entree = sortie
       
 end
 
+
+(* Implémentations par défaut qui échouent *)
+(* module Implementations : Sujet = struct
+  
+  let inverser _ = failwith "a implementer"
+
+  let trier _ = failwith "a implementer"
+
+  let trier_unique _ = failwith "a implementer"
+  
+end
+*)
+
+(* Des implémentations avec des erreurs *)
+module Implementations : Sujet = struct
+  
+  let inverser lst = 
+    if List.length lst >= 5 then 
+      lst
+    else
+      List.rev lst
+
+  let trier lst =
+    if  List.fold_left Int.mul 1 lst > 67 then
+      lst
+    else
+      List.sort Int.compare lst
+
+  let trier_unique lst =
+    if List.fold_left Int.add 0 lst == 34 then
+      lst
+    else
+      List.sort_uniq Int.compare lst
+              
+end
+
+(* Vérification des implémentations *)
 module Tests = struct
   
   let inverser =
@@ -76,12 +93,12 @@ module Tests = struct
   let trier =
     QCheck.Test.make ~count:1000 ~name:"trier" 
       QCheck.(small_list small_int)
-      (fun entree -> Predicats.trier_ok entree (Implementations.trier Int.compare entree))
+      (fun entree -> Predicats.trier_ok entree (Implementations.trier entree))
     
   let trier_unique =
     QCheck.Test.make ~count:1000 ~name:"trier_unique" 
       QCheck.(small_list small_int)
-      (fun entree -> Predicats.trier_unique_ok entree (Implementations.trier_unique Int.compare entree))
+      (fun entree -> Predicats.trier_unique_ok entree (Implementations.trier_unique entree))
         
 end
 
