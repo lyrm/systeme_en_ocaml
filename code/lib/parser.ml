@@ -1,3 +1,7 @@
+(* Note : Si on s'est amusé à réimplémenter un parser ici, il existe
+   bien entendu des outils pour faire cela beaucoup plus simplement en
+   ocaml comme le module [Arg] ou [Angstrom]. *)
+
 exception Empty_line
 
 (** [split_cmd_args line] découpe la ligne de commande à chaque espace pour extraire :

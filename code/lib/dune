@@ -3,4 +3,4 @@
  (name minishell)
  (package code)
  (libraries unix str)
- (modules minishell parser command io ast))
+ (modules minishell parser command ast))

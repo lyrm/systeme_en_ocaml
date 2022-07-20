@@ -1,11 +1,3 @@
-let _print_status program status =
-  match status with
-  | Unix.WEXITED 255 -> ()
-  | WEXITED status -> Printf.printf "%s exited with code %d\n%!" program status
-  | WSIGNALED signal ->
-      Printf.printf "%s killed by signal %d\n%!" program signal
-  | WSTOPPED _signal -> Printf.printf "%s stopped (???)\n%!" program
-
 (* Dès qu'un erreur Unix est attrapée, [exit 2] est retourné et le minishell s'arrête. *)
 let _naive_minishell () =
   try
