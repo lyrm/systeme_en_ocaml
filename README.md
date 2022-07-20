@@ -4,9 +4,24 @@ Le contenu de ce repo a été créé pour une présentation de Juillet 2022 sur 
 # La présentation
 Disponible [ici](./slides/main.pdf). TODO
 
-# Installation
-## OCaml 4.14.0
-## OCaml 5.0.0 (exemples à decommenter dans les ... )
+# Installation d'OCaml
+
+La première étape est d'installer le gestionnaire de paquets _opam_: https://opam.ocaml.org/doc/Install.html
+
+## OCaml
+
+### OCaml 4.14.0
+
+* `opam switch create 4.14.0`
+
+### OCaml 5.0.0 (exemples à decommenter dans les ... )
+
+Il est possible de tester OCaml 5.0 en version alpha avec une version d'opam supérieure à 2.1.0:
+* `opam switch create 5.0.0~alpha0 --repo=default,alpha=git+https://github.com/kit-ty-kate/opam-alpha-repository.git`
+
+## Outils de développement
+
+* `opam install dune ocaml-lsp-server ocamlformat`
 
 # Questions ?
 
@@ -44,8 +59,9 @@ Cet example montre comment on peut automatiquement vérifier des propriétés su
 et trouver des contre-exemples minimaux.
 
 # Liens divers
-+ vers Mirage
-+ OCaml 5
+
++ vers Mirage: mirage.io
++ OCaml 5: 
 + QCheck
 + Écosystème
 
