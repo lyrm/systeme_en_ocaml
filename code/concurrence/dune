@@ -2,6 +2,7 @@
  (public_name peterson)
  (name peterson)
  (package code)
+ (libraries threads)
  (modules peterson))
 
 (executable
@@ -9,3 +10,17 @@
  (name boulanger)
  (package code)
  (modules boulanger))
+
+
+(executable
+ (public_name main)
+ (name main)
+ (package code)
+ (libraries threads)
+ (modules main))
+
+(executable
+ (public_name buggy_test)
+ (name buggy_test)
+ (package code)
+ (modules buggy_test))
