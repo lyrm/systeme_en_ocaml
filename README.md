@@ -2,7 +2,7 @@
 Le contenu de ce repo a été créé pour une présentation de Juillet 2022 sur la programmation système en OCaml à destination des professeurs des nouvelles classes préparatoires MPI.
 
 # La présentation
-Disponible [ici](./slides/main.pdf). TODO
+Disponible [ici](./slides/main.pdf).
 
 # Installation d'OCaml
 
@@ -14,7 +14,9 @@ La première étape est d'installer le gestionnaire de paquets _opam_: https://o
 
 * `opam switch create 4.14.0`
 
-### OCaml 5.0.0 (exemples à decommenter dans les ... )
+### OCaml 5.0.0 
+
+Le code du répertoire `concurrence` est souvent aussi proposer avec les `domains` de OCaml 5.0 mais en commentaires (pour éviter les problèmes de compilations quand une version antérieure est utilisée).
 
 Il est possible de tester OCaml 5.0 en version alpha avec une version d'opam supérieure à 2.1.0:
 * `opam switch create 5.0.0~alpha0 --repo=default,alpha=git+https://github.com/kit-ty-kate/opam-alpha-repository.git`
