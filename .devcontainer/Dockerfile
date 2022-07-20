@@ -10,3 +10,5 @@ SHELL ["/bin/bash", "-c"]
 USER opam
 RUN sudo apt install -y pkg-config libev-dev libssl-dev
 RUN opam install -y dune ocaml-lsp-server ocamlformat
+# Install additional packages
+RUn opam install -y qcheck lwt
