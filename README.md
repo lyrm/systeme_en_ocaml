@@ -10,7 +10,7 @@ Disponible [ici](./slides/main.pdf). TODO
 
 # Questions ?
 
-Se référer à l'[onglet discussion](./discussions) !
+L'[onglet discussion](https://github.com/lyrm/turboccoli/discussions) est disponible pour poser vos questions !
 
 # Programmation système en OCaml
 
@@ -20,7 +20,15 @@ Les documents ci-dessous ont été utilisé pour la préparation :
 - [une version plus récente et en anglais](http://ocaml.github.io/ocamlunix/) (certains modules OCaml ont changé de noms entre les 2 versions)
 
 ## Code du minishell
-TODO
+
+Lien: [/code/minishell/](./code/minishell/)
+
+Implémentation d'un _shell_ en OCaml. Utilisation des fonctionalités du module **Unix**:
+
+- descripteurs de fichiers / entrée et sortie standard
+- _fork_ et _execvp_
+- _dup2_
+- _pipes_
 
 ## Algorithmes d'exclusion mutuelle
 ### Peterson
@@ -29,6 +37,11 @@ TODO
 TODO
 
 # QCheck
+
+Lien: [/code/tp.qcheck/](./code/tp.qcheck/)
+
+Cet example montre comment on peut automatiquement vérifier des propriétés sur une fonction arbitraire
+et trouver des contre-exemples minimaux.
 
 # Liens divers
 + vers Mirage
