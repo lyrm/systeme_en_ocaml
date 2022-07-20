@@ -49,8 +49,19 @@ et trouver des contre-exemples minimaux.
 + QCheck
 + Écosystème
 
-# Codebases
-TODO
+# Codespaces
+
+Github Codespace est une fonctionnalité de Github permettant d'obtenir un espace de développement.
+Utilisez le bouton "<> Code" puis "Create codespace on main" pour y accéder. 
+
+À partir de là, un environnement de développement basé sur [VS Code](https://code.visualstudio.com/) et une machine virtuelle pré-configurée démarre.
+Il permet d'obtenir de façon très rapide une installation OCaml complète contenant le code souhaité.
+
+Note: le service est payant pour les utilisateurs normaux, mais il existe des offres gratuites pour professeurs et étudiants:
+- professeurs: https://education.github.com/teachers
+- étudiants: https://education.github.com/students
+
+Un dépôt minimal ré-utilisable est disponible ici: https://github.com/TheLortex/ocaml-codespace
 
 # Tarides
 Quelques mots et liens.
