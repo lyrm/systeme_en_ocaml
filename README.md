@@ -36,7 +36,8 @@ Les documents ci-dessous ont été utilisé pour la préparation :
 
 ## Code du minishell
 
-Lien: [/code/minishell/](./code/minishell/)
+* Lien: [/code/minishell/](./code/minishell/)
+* Exécuter: `cd code && dune exec ./minishell/minishell.exe`
 
 Implémentation d'un _shell_ en OCaml. Utilisation des fonctionalités du module **Unix**:
 
@@ -53,7 +54,8 @@ TODO
 
 # QCheck
 
-Lien: [/code/tp.qcheck/](./code/tp.qcheck/)
+* Lien: [/code/tp.qcheck/](./code/tp.qcheck/tp.ml)
+* Exécuter: `cd code && dune exec ./tp.qcheck/tp.exe`
 
 Cet example montre comment on peut automatiquement vérifier des propriétés sur une fonction arbitraire
 et trouver des contre-exemples minimaux.
