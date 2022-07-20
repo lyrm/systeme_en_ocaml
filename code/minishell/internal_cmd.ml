@@ -1,3 +1,4 @@
+(** Types des commandes *)
 type t =
   | Mkdir of string * int option
   | Rm of string * bool
@@ -7,6 +8,9 @@ type t =
   | Ls of string option
   | Cat of string list
 
+(** [files_in_dir dir] liste tous les fichiers non spéciaux dans le
+   répertoire [dir] (dans le répertoire courant si dir = None). Les
+   fichiers courant "." et parent ".."  ne sont pas retournés. *)
 let files_in_dir diropt =
   let dirname =
     match diropt with None -> Filename.current_dir_name | Some d -> d
@@ -25,7 +29,8 @@ let files_in_dir diropt =
       not (file = Filename.parent_dir_name || file = Filename.current_dir_name))
     all_files
 
-(* Écrit par bloc de 8192 caractères *)
+(** [write_stdout txt] écrit la chaîne de caractère [txt] sur la
+   sortie standard par bloc de 8192 caractères. *)
 let write_stdout text =
   let text = Bytes.of_string text in
   let max_len = 8192 in
@@ -36,6 +41,7 @@ let write_stdout text =
   in
   loop 0 (Bytes.length text)
 
+(** [write_fd_stdout fd] recopie le contenu de [fd] sur la sortie standard. *)
 let write_fd_stdout fd_in =
   let buffer_size = 8192 in
   let buffer = Bytes.create buffer_size in
@@ -48,6 +54,7 @@ let write_fd_stdout fd_in =
   in
   copy_loop ()
 
+(** [exec_cmd cmd] exécute la commande [cmd]. *)
 let exec_cmd = function
   | Cat files -> (
       match files with

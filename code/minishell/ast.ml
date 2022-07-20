@@ -1,21 +1,33 @@
+(** Catégorise les différentes commandes *)
 type cmd_kind =
-  | Internal of Command.t (* les commandes precedentes *)
-  | External of string list (* commandes dans le PATH *)
-  | Cd of string (* changement de dossier *)
+  | Internal of Internal_cmd.t
+      (** les commandes dont l'implémentation est fournie ici *)
+  | External of string list
+      (** les commandes dont l'implémentation est
+       fournie par le système *)
+  | Cd of string
+      (** Command de changement de dossier (nécessite un traitement à part !) *)
 
 type redirection =
-  | In of string
-  (* > *)
-  | Out of string (* < *)
+  | In of string  (** écrit [>]  dans un terminal *)
+  | Out of string  (** écrit [<] dans un terminal *)
 
 type command = cmd_kind * redirection list
+(** Une commande est donc définie par une paire :
+  - la commande à proprement parler
+  - les redirections qui redefinissent les entrée et sortie standards.
+*)
 
+(** Une ligne de commande peut aussi contenir des tubes [|] et
+    les opérateurs logiques [&&] et [||] *)
 type t =
   | Command of command
-  | Pipe of t * t (* | *)
+  | Pipe of t * t  (** | *)
   | And of t * t
   | Or of t * t
 
+(* Toutes les fonctions en dessous s'occupent du parsing de la ligne
+   de commande (et appellent [Parser.parse] pour les commandes internes. *)
 let split word str = Str.bounded_split (Str.regexp (" " ^ word ^ " ")) str 2
 
 let parse_c str =

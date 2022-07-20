@@ -2,5 +2,4 @@
  (public_name minishell)
  (name minishell)
  (package code)
- (libraries unix str)
- (modules minishell parser command ast))
+ (libraries unix str))

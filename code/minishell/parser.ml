@@ -2,6 +2,8 @@
    bien entendu des outils pour faire cela beaucoup plus simplement en
    ocaml comme le module [Arg] ou [Angstrom]. *)
 
+open Internal_cmd
+
 exception Empty_line
 
 (** [split_cmd_args line] découpe la ligne de commande à chaque espace pour extraire :
@@ -140,7 +142,7 @@ let init_cmd_line cmd ~flags ~named ~positional =
   }
 
 (** [build_* cmd_line] transforme un type [command_line] en un
-   type [Command.t]. *)
+   type [Internal_cmd.t]. *)
 let build_mkdir cmd_line =
   let filename =
     match cmd_line.positional.(0) with
@@ -154,7 +156,7 @@ let build_mkdir cmd_line =
         try Some (int_of_string ("0o" ^ p))
         with _ -> raise (exn_invalid_named_value_argument "mode (-m)" p))
   in
-  Command.Mkdir (filename, perm)
+  Mkdir (filename, perm)
 
 let build_rm cmd_line =
   let filename =
@@ -163,7 +165,7 @@ let build_rm cmd_line =
     | None -> raise (exn_missing_arg "filename")
   in
   let recursive = Flags.find "r" cmd_line.flags in
-  Command.Rm (filename, recursive)
+  Rm (filename, recursive)
 
 let build_ln cmd_line =
   let source =
@@ -177,7 +179,7 @@ let build_ln cmd_line =
     | None -> raise (exn_missing_arg "destination filename")
   in
   let symbolic = Flags.find "s" cmd_line.flags in
-  Command.Ln (source, dest, symbolic)
+  Ln (source, dest, symbolic)
 
 let build_echo cmd_line =
   let text_to_write =
@@ -185,13 +187,13 @@ let build_echo cmd_line =
     | Some n -> n
     | None -> raise (exn_missing_arg "text")
   in
-  Command.Echo text_to_write
+  Echo text_to_write
 
 let build_ls cmd_line =
   let filename =
     match cmd_line.positional.(0) with Some n -> Some n | None -> None
   in
-  Command.Ls filename
+  Ls filename
 
 let build_cat cmd_line =
   let files =
@@ -199,7 +201,7 @@ let build_cat cmd_line =
     |> List.filter Option.is_some
     |> List.map Option.get
   in
-  Command.Cat files
+  Cat files
 
 let build_mv cmd_line =
   let source =
@@ -208,16 +210,16 @@ let build_mv cmd_line =
     | None -> raise (exn_missing_arg "source filename")
   in
   let dest =
-    match cmd_line.positional.(0) with
+    match cmd_line.positional.(1) with
     | Some n -> n
     | None -> raise (exn_missing_arg "destination filename")
   in
-  Command.Mv (source, dest)
+  Mv (source, dest)
 
 (** [parse cmd_line] parse la ligne de commande [cmd_line], càd, elle
    est découpée pour séparer la commande et les arguments puis, les
    arguments sont parsées. Finalement, on construit le type
-   [Command.t].  *)
+   [Internal_cmd.t].  *)
 let parse cmd_line =
   let cmd, args = split_cmd_args cmd_line in
   match cmd with

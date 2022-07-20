@@ -1,3 +1,4 @@
+(** Types des commandes internes  *)
 type t =
   | Mkdir of string * int option
   | Rm of string * bool
@@ -7,4 +8,6 @@ type t =
   | Ls of string option
   | Cat of string list
 
+
+(** [exec_cmd cmd] exécute la commande [cmd]. *)
 val exec_cmd : t -> unit

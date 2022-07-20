@@ -4,8 +4,8 @@ let _naive_minishell () =
     while true do
       let cmd_line = input_line Stdlib.stdin in
       try
-        let cmd : Command.t = Parser.parse cmd_line in
-        Command.exec_cmd cmd
+        let cmd : Internal_cmd.t = Parser.parse cmd_line in
+        Internal_cmd.exec_cmd cmd
       with
       | Parser.Parsing_error err -> Parser.print_error err
       | Parser.Empty_line -> ()
@@ -25,7 +25,7 @@ let setup_redirection = function
       Unix.close fd
 
 let exec_cmd = function
-  | Ast.Internal cmd -> Command.exec_cmd cmd
+  | Ast.Internal cmd -> Internal_cmd.exec_cmd cmd
   | Ast.External (program :: _ as cmd) ->
       Unix.execvp program (Array.of_list cmd)
   | _ -> failwith ""
