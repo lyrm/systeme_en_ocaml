@@ -37,7 +37,7 @@ let () =
 
    Ici pas besoin d'augmenter artificiellement les chances que
    l'entrelacement arrive !  *)
-let main () =
+(*let main () =
   let max = 1_000_000 in
   let compteur = ref 0 in
 
@@ -64,3 +64,4 @@ let main () =
   print_endline ""
 
 let () = main ()
+*)

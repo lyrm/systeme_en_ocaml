@@ -1,6 +1,6 @@
 
 \begin{frame}{MirageOS}
-    
+
 \begin{figure}
     \centering
     \begin{minipage}{0.45\textwidth}
@@ -20,10 +20,10 @@
 \begin{frame}[fragile]{Abstraction: signatures de modules}
 
 \begin{lstlisting}
-module type Read_only_store = sig 
+module type Read_only_store = sig
     type t
     type key = string
-    
+
     val get : t -> key -> string Lwt.t
 end
 \end{lstlisting}
@@ -31,13 +31,13 @@ end
 \begin{lstlisting}
 module type HTTP = sig
     type t
-    module Request : sig 
+    module Request : sig
         type t
-        
+
         val path : t -> string
     end
     type reponse = string
-    
+
     val listen : t -> (HTTP.Request.t -> response Lwt.t) -> unit Lwt.t
 end
 \end{lstlisting}
@@ -46,21 +46,21 @@ end
 \end{frame}
 
 \begin{frame}[fragile]{Implémentation}
-    
+
 \begin{lstlisting}
 
-(* Les dépendances de notre application sont abstraites 
+(* Les dépendances de notre application sont abstraites
    via le foncteur Make *)
-module Make (FS : Read_only_store) (Server : HTTP) = 
+module Make (FS : Read_only_store) (Server : HTTP) =
 struct
     let start fs http =
-        HTTP.listen http (fun request ->
-            let path = HTTP.Request.path request in
+        Server.listen http (fun request ->
+            let path = Server.Request.path request in
             FS.get fs path)
 end
 
 (* pour les tests *)
-module Application = 
+module Application =
     Make (In_memory_store) (Mock_http_server)
 
 (* en production *)
