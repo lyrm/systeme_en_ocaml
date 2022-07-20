@@ -66,15 +66,21 @@ let rec interprete : Ast.t -> int = function
       let code_a = interprete a in
       if code_a == 0 then 0 else interprete b
 
+
+let prompt = function
+  | None -> Printf.printf "%s> %!" (Unix.getcwd ())
+  | Some code -> Printf.printf "%s (%d)> %!" (Unix.getcwd ()) code 
+
 let minishell () =
+  let last_code = ref None in
   try
-    Printf.printf "%s> %!" (Unix.getcwd ());
     while true do
+      prompt !last_code;
       let cmd = input_line Stdlib.stdin in
+      last_code := None;
       try
         let cmd = Ast.parse cmd in
-        let code = interprete cmd in
-        Printf.printf "%s (%d)> %!" (Unix.getcwd ()) code
+        last_code := Some (interprete cmd)
       with
       | Parser.Parsing_error err -> Parser.print_error err
       | Parser.Empty_line -> ()
