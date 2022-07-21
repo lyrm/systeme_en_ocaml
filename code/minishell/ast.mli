@@ -49,8 +49,9 @@ val to_string : t -> string
 (* Il y a évidemment des tas de façons de rendre le minishell encore
    plus intéressant, en ajoutant :
 
-  - la gestion du parenthésage (qui complexifie uniquement le parser)
+  - la gestion du parenthésage et des guillements (qui complexifie uniquement le parser)
   - un historique (history)
+  - plus de commande
   - etc ...
 
 *)
