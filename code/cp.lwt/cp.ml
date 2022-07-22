@@ -5,39 +5,44 @@ let buf_size = 65536
 
 let buffer = Bytes.create buf_size 
 
-let rec perform_copy_lwt src dst =
-  let* n = Lwt_unix.read src buffer 0 buf_size in
-  if n = buf_size then
-    let* _ = Lwt_unix.write dst buffer 0 n in
-    perform_copy_lwt src dst
-  else
-    let* _ = Lwt_unix.write dst buffer 0 n in
-    Lwt.return (`Ok ())
+module Sync = struct
+  (* Copie synchrone implémentée de façon "classique" *)
+  let rec perform_copy src dst =
+    let n = Unix.read src buffer 0 buf_size in
+    Unix.write dst buffer 0 n |> ignore;
+    if n = buf_size then
+      perform_copy src dst
+    else
+      `Ok ()
 
-let cp_lwt src dest =
-  Lwt_main.run @@
-  let* fd_src = Lwt_unix.openfile src [O_RDONLY] 0 in 
-  let* fd_dst = Lwt_unix.openfile dest [O_RDWR; O_CREAT; O_TRUNC] 0o640 in
-  perform_copy_lwt fd_src fd_dst
-  
+  let cp src dest =
+    let fd_src = Unix.openfile src [O_RDONLY] 0 in
+    let fd_dst = Unix.openfile dest  [O_RDWR; O_CREAT; O_TRUNC] 0o640 in
+    perform_copy fd_src fd_dst
+end
 
-let rec perform_copy src dst =
-  let n = Unix.read src buffer 0 buf_size in
-  Unix.write dst buffer 0 n |> ignore;
-  if n = buf_size then
-    perform_copy src dst
-  else
-    `Ok ()
+module Async = struct
+  (* Copie asynchrone en utilisant Lwt *)
+  let rec perform_copy_lwt src dst =
+    let* n = Lwt_unix.read src buffer 0 buf_size in
+    if n = buf_size then
+      let* _ = Lwt_unix.write dst buffer 0 n in
+      perform_copy_lwt src dst
+    else
+      let* _ = Lwt_unix.write dst buffer 0 n in
+      Lwt.return (`Ok ())
 
-
-let cp_sync src dest =
-  let fd_src = Unix.openfile src [O_RDONLY] 0 in
-  let fd_dst = Unix.openfile dest  [O_RDWR; O_CREAT; O_TRUNC] 0o640 in
-  perform_copy fd_src fd_dst
+  let cp src dest =
+    Lwt_main.run @@
+    let* fd_src = Lwt_unix.openfile src [O_RDONLY] 0 in 
+    let* fd_dst = Lwt_unix.openfile dest [O_RDWR; O_CREAT; O_TRUNC] 0o640 in
+    perform_copy_lwt fd_src fd_dst
+end
 
 let cp sync =
-  if sync then cp_sync else cp_lwt
+  if sync then Sync.cp else Async.cp
 
+(* Cmdliner permet de parser la ligne de commande *)
 open Cmdliner
 
 let src =
