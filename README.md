@@ -1,12 +1,12 @@
 # À propos
 
-Le contenu de ce dépôt a été créé pour une présentation de Juillet 2022 sur la programmation système en OCaml à destination des professeurs des nouvelles classes préparatoires MPI, à l'occasion des journées MP2I/MPI à l'ENS de Lyon.
+Le contenu de ce dépôt a été créé pour une présentation en juillet 2022 sur la programmation système en OCaml à destination des professeurs des classes préparatoires MPI, à l'occasion des journées MP2I/MPI à l'ENS de Lyon.
 
 # La présentation
 
 Disponible [ici](./slides/main.pdf):
 
-* Partie 1: présentation de la programmation système via module _Unix_ en construisant un _mini-shell_.
+* Partie 1: présentation de la programmation système via module _Unix_ par la construction d'un _mini-shell_.
 * Partie 2: quelques projets de l'écosystème OCaml:
   - MirageOS: un système d'exploitation modulaire.
   - OCaml 5: prochaine version d'OCaml introduisant la programmation multicore dans le langage.
@@ -30,7 +30,7 @@ On crée un _switch_ avec OCaml 4.14.0.
 
 ### OCaml 5.0.0 
 
-Le code du répertoire `concurrence` est souvent aussi proposer avec les `domains` de OCaml 5.0 mais en commentaires (pour éviter les problèmes de compilations quand une version antérieure est utilisée).
+Le code du répertoire `concurrence` est souvent accompagné d'une version utilisant les `domains` de OCaml 5.0 en commentaires (pour éviter les problèmes de compilations quand une version antérieure est utilisée).
 
 Il est possible de tester OCaml 5.0 en version alpha avec une version d'opam supérieure à 2.1.0:
 * `opam switch create 5.0.0~alpha0 --repo=default,alpha=git+https://github.com/kit-ty-kate/opam-alpha-repository.git`
@@ -56,7 +56,7 @@ Il est possible de tester OCaml 5.0 en version alpha avec une version d'opam sup
 Github Codespace est une fonctionnalité de Github permettant d'obtenir un espace de développement pré-configuré.
 Utilisez le bouton "<> Code" puis "Create codespace on main" pour y accéder. 
 
-À partir de là, un environnement de développement basé sur [VS Code](https://code.visualstudio.com/) et une machine virtuelle pré-configurée démarre.
+À partir de là, une machine virtuelle pré-configurée démarre et offre un environnement de développement basé sur [VS Code](https://code.visualstudio.com/).
 Il permet d'obtenir de façon très rapide une installation OCaml complète contenant le code souhaité.
 
 Note: le service est payant pour la plupart des utilisateurs, mais il existe des offres gratuites pour professeurs et étudiants:
@@ -68,9 +68,10 @@ Un dépôt minimal ré-utilisable est disponible ici: https://github.com/TheLort
 # Programmation système en OCaml
 
 ## Lien externes
-Les documents ci-dessous ont été utilisé pour la préparation :
+
+Les documents ci-dessous ont été utilisé pour la préparation de la présentation:
 - [Programmation système en Ocaml](http://gallium.inria.fr/~remy/camlunix/cours.html)
-- [une version plus récente et en anglais](http://ocaml.github.io/ocamlunix/) (certains modules OCaml ont changé de noms entre les 2 versions)
+- [une version plus récente et en anglais](http://ocaml.github.io/ocamlunix/) (certains modules OCaml ont changé de nom entre les 2 versions)
 
 ## Code du minishell
 
@@ -89,22 +90,21 @@ Implémentation d'un _shell_ en OCaml. Utilisation des fonctionalités du module
 ### Peterson
 
 * Présentation de l'algorithme: https://fr.wikipedia.org/wiki/Algorithme_de_Peterson
-* Lien [/code/concurrence/peterson.ml](./code/concurrence/peterson.ml)
-* Exécuter `cd code && dune exec ./concurrence/peterson.exe`
+* Lien: [/code/concurrence/peterson.ml](./code/concurrence/peterson.ml)
+* Exécuter: `cd code && dune exec ./concurrence/peterson.exe`
 
 ### Boulangerie
 
 * Présentation de l'algorithme: https://fr.wikipedia.org/wiki/Algorithme_de_la_boulangerie
-* Lien [/code/concurrence/boulanger.ml](./code/concurrence/boulanger.ml)
-* Exécuter `cd code && dune exec ./concurrence/boulanger.exe`
+* Lien: [/code/concurrence/boulanger.ml](./code/concurrence/boulanger.ml)
+* Exécuter: `cd code && dune exec ./concurrence/boulanger.exe`
 
 # QCheck
 
+* Cet example montre comment on peut automatiquement vérifier des propriétés sur une fonction arbitraire
+et trouver des contre-exemples minimaux.
 * Lien: [/code/tp.qcheck/tp.ml](./code/tp.qcheck/tp.ml)
 * Exécuter: `cd code && dune exec ./tp.qcheck/tp.exe`
-
-Cet example montre comment on peut automatiquement vérifier des propriétés sur une fonction arbitraire
-et trouver des contre-exemples minimaux.
 
 # Liens divers
 
